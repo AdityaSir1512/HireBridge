@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HireBridge</title>
+  <link rel="icon" type="image/svg+xml" href="/frontend/public/assets/images/hirebridge-logo-full.svg">
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/notifications.css">
+  <style>
+    .cta{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;}
+    .hero{
+      text-align:center;
+      padding:80px 20px 60px;
+      max-width:900px;
+      margin:0 auto;
+      position:relative;
+    }
+    .hero::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:50%;
+      transform:translateX(-50%);
+      width:600px;
+      height:600px;
+      background:radial-gradient(circle,rgba(139,92,246,0.15) 0%,transparent 70%);
+      pointer-events:none;
+      z-index:-1;
+    }
+    .hero h1{
+      font-size:56px;
+      margin:0 0 20px;
+      background:linear-gradient(135deg,#8b5cf6,#14b8a6);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      font-weight:900;
+      line-height:1.1;
+      letter-spacing:-1px;
+    }
+    .hero>p{
+      font-size:22px;
+      color:var(--text-secondary);
+      margin:0 0 40px;
+      font-weight:500;
+    }
+    
+    .features-section{
+      margin:80px 0;
+      padding:60px 24px;
+      background:var(--surface-color);
+      border-radius:32px;
+      box-shadow:var(--card-shadow);
+    }
+    .section-title{
+      text-align:center;
+      font-size:40px;
+      margin:0 0 48px;
+      color:var(--text-color);
+      font-weight:800;
+    }
+    .features-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+      gap:28px;
+      margin-top:40px;
+    }
+    .feature-card{
+      background:var(--background-color);
+      border:2px solid var(--border-color);
+      border-radius:20px;
+      padding:32px 24px;
+      text-align:center;
+      transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
+      position:relative;
+      overflow:hidden;
+    }
+    .feature-card::before{
+      content:'';
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:4px;
+      background:linear-gradient(90deg,#8b5cf6,#14b8a6);
+      transform:scaleX(0);
+      transition:transform 0.4s ease;
+    }
+    .feature-card:hover::before{
+      transform:scaleX(1);
+    }
+    .feature-card:hover{
+      transform:translateY(-8px);
+      box-shadow:0 12px 40px rgba(139,92,246,0.2);
+      border-color:var(--primary-color);
+    }
+    .feature-icon{
+      font-size:56px;
+      margin-bottom:20px;
+      display:block;
+      filter:grayscale(20%);
+      transition:all 0.3s ease;
+    }
+    .feature-card:hover .feature-icon{
+      filter:grayscale(0%);
+      transform:scale(1.1);
+    }
+    .feature-card h3{
+      font-size:22px;
+      margin:0 0 12px;
+      color:var(--text-color);
+      font-weight:700;
+    }
+    .feature-card p{
+      font-size:15px;
+      line-height:1.7;
+      color:var(--text-secondary);
+      margin:0;
+    }
+    
+    .stats-section{margin:80px 0;text-align:center;}
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:40px;
+      margin-top:40px;
+    }
+    .stat-item{
+      padding:32px 24px;
+      background:var(--surface-color);
+      border-radius:20px;
+      box-shadow:var(--card-shadow);
+      transition:all 0.3s ease;
+    }
+    .stat-item:hover{
+      transform:translateY(-4px);
+      box-shadow:var(--card-shadow-hover);
+    }
+    .stat-number{
+      font-size:52px;
+      font-weight:900;
+      background:linear-gradient(135deg,#8b5cf6,#14b8a6);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      margin:0 0 8px;
+    }
+    .stat-label{
+      font-size:18px;
+      color:var(--text-secondary);
+      margin:0;
+      font-weight:600;
+    }
+    
+    .how-it-works{
+      margin:80px 0;
+      padding:60px 24px;
+      background:var(--surface-color);
+      border-radius:32px;
+      box-shadow:var(--card-shadow);
+    }
+    .steps-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:32px;
+      margin-top:48px;
+    }
+    .step-card{
+      position:relative;
+      padding:32px 24px;
+      text-align:center;
+      background:var(--background-color);
+      border-radius:20px;
+      border:2px solid transparent;
+      transition:all 0.3s ease;
+    }
+    .step-card:hover{
+      border-color:var(--primary-color);
+      transform:translateY(-4px);
+      box-shadow:0 8px 24px rgba(139,92,246,0.15);
+    }
+    .step-number{
+      width:56px;
+      height:56px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#8b5cf6,#14b8a6);
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:26px;
+      font-weight:900;
+      margin:0 auto 20px;
+      box-shadow:0 4px 12px rgba(139,92,246,0.3);
+    }
+    .step-card h3{
+      font-size:20px;
+      margin:0 0 12px;
+      color:var(--text-color);
+      font-weight:700;
+    }
+    .step-card p{
+      font-size:15px;
+      line-height:1.7;
+      color:var(--text-secondary);
+      margin:0;
+    }
+    
+    .cta-section{
+      margin:80px 0 60px;
+      padding:60px 32px;
+      background:linear-gradient(135deg,#8b5cf6,#14b8a6);
+      border-radius:32px;
+      text-align:center;
+      color:white;
+      box-shadow:0 20px 60px rgba(139,92,246,0.4);
+      position:relative;
+      overflow:hidden;
+    }
+    .cta-section::before{
+      content:'';
+      position:absolute;
+      top:-50%;
+      right:-50%;
+      width:500px;
+      height:500px;
+      background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .cta-section h2{
+      font-size:42px;
+      margin:0 0 20px;
+      font-weight:900;
+    }
+    .cta-section p{
+      font-size:20px;
+      margin:0 0 32px;
+      opacity:0.95;
+    }
+    .cta-buttons{
+      display:flex;
+      gap:20px;
+      justify-content:center;
+      flex-wrap:wrap;
+    }
+    .cta-btn{
+      padding:16px 40px;
+      border-radius:14px;
+      font-size:17px;
+      font-weight:700;
+      text-decoration:none;
+      transition:all 0.3s ease;
+      display:inline-block;
+    }
+    .cta-btn.primary{
+      background:white;
+      color:#7c3aed;
+      box-shadow:0 4px 14px rgba(0,0,0,0.15);
+    }
+    .cta-btn.primary:hover{
+      box-shadow:0 6px 20px rgba(0,0,0,0.25);
+      transform:translateY(-3px) scale(1.02);
+    }
+    .cta-btn.secondary{
+      background:rgba(255,255,255,0.15);
+      color:white;
+      border:2px solid white;
+      backdrop-filter:blur(10px);
+    }
+    .cta-btn.secondary:hover{
+      background:rgba(255,255,255,0.25);
+      transform:translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <div class="brand">
+        <span class="logo"></span>
+        <span>HireBridge</span>
+      </div>
+      <nav class="primary-nav">
+        <button class="btn notification-bell" onclick="HB.showNotifications()" title="Notifications" aria-label="Notifications">
+          <span>🔔</span>
+          <span class="notification-badge hidden" id="notificationBadge">0</span>
+        </button>
+        <a href="/frontend/public/login.html">Login</a>
+        <a class="btn" href="/frontend/public/register.html">Sign up</a>
+        <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <h1>Bridge the Gap Between Students and Employers</h1>
+      <p>🎯 Internships • 💼 Freelancing • 🚀 Full-time Roles</p>
+      <div class="cta">
+        <a class="btn primary" href="/frontend/public/register.html?type=seeker">I'm a Student/Candidate</a>
+        <a class="btn" href="/frontend/public/register.html?type=employer">I'm an Employer</a>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+      <h2 class="section-title">Why Students Love HireBridge 🎓</h2>
+      <div class="features-grid">
+        <a href="/frontend/public/smart-matching.html" class="feature-card" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <span class="feature-icon">🎯</span>
+          <h3>Smart Matching</h3>
+          <p>AI-powered algorithm matches your skills and interests with the perfect opportunities</p>
+        </a>
+        <a href="/frontend/public/cv-upload.html" class="feature-card" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <span class="feature-icon">📄</span>
+          <h3>Smart CV Parser</h3>
+          <p>Upload your resume and our AI extracts skills, experience, and qualifications automatically</p>
+        </a>
+        <a href="/frontend/public/messaging.html" class="feature-card" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <span class="feature-icon">💬</span>
+          <h3>Direct Messaging</h3>
+          <p>Chat directly with recruiters and hiring managers in real-time</p>
+        </a>
+        <a href="/frontend/public/interview-scheduler.html" class="feature-card" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <span class="feature-icon">📅</span>
+          <h3>Interview Scheduler</h3>
+          <p>Easy scheduling and reminders for your upcoming interviews</p>
+        </a>
+        <a href="/frontend/public/reviews.html" class="feature-card" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <span class="feature-icon">⭐</span>
+          <h3>Reviews & Ratings</h3>
+          <p>Check company reviews from other students before applying</p>
+        </a>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works">
+      <h2 class="section-title">How It Works 🚀</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Create Your Profile</h3>
+          <p>Sign up in 2 minutes and build your professional profile with skills and experience</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>Get Matched</h3>
+          <p>Our AI finds the best opportunities based on your profile and preferences</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Apply & Connect</h3>
+          <p>One-click applications and direct chat with recruiters</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">4</div>
+          <h3>Land Your Dream Job</h3>
+          <p>Schedule interviews, get feedback, and start your career journey</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2>Ready to Start Your Career Journey? 🎉</h2>
+      <p>Join thousands of students who found their dream opportunities through HireBridge</p>
+      <div class="cta-buttons">
+        <a href="/frontend/public/register.html?type=seeker" class="cta-btn primary">Get Started for Free</a>
+        <a href="/frontend/public/about-us.html" class="cta-btn secondary">Learn More</a>
+      </div>
+    </section>
+  </main>
+  
+  <footer class="site-footer">
+    <div class="container" style="max-width: 1200px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px; padding: 24px 0 16px;">
+        <div style="flex: 1; min-width: 200px;">
+          <a href="/frontend/public/index.html" class="brand" style="text-decoration: none; cursor: pointer; margin-bottom: 8px;">
+            <span class="logo" style="width: 32px; height: 32px;"></span>
+            <span style="font-size: 18px;">HireBridge</span>
+          </a>
+          <p class="muted" style="margin: 8px 0 0; font-size: 13px;">Connecting talent and opportunity with intelligence.</p>
+        </div>
+        
+        <div style="display: flex; gap: 32px; flex-wrap: wrap;">
+          <div>
+            <h4 style="margin: 0 0 8px; font-size: 14px; color: var(--text-color);">Company</h4>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <a href="/frontend/public/about-us.html" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">About</a>
+              <a href="/frontend/public/careers.html" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">Careers</a>
+            </div>
+          </div>
+          
+          <div>
+            <h4 style="margin: 0 0 8px; font-size: 14px; color: var(--text-color);">Contact</h4>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <a href="mailto:abhirajgupta06072005@gmail.com" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">📧 abhirajgupta06072005@gmail.com</a>
+              <a href="tel:+919140470230" style="font-size: 13px; color: var(--text-secondary); text-decoration: none;">📱 +91 91404 70230</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="border-top: 1px solid var(--border-color); padding: 12px 0; text-align: center;">
+        <p class="muted" style="margin: 0; font-size: 12px;">© 2025 HireBridge - Bridging Talent with Opportunity</p>
+      </div>
+    </div>
+  </footer>
+  
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script src="/frontend/public/js/common/chatbot.js"></script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notification Demo - HireBridge</title>
+  <link rel="icon" type="image/svg+xml" href="/frontend/public/assets/images/hirebridge-logo-full.svg">
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/notifications.css">
+  <style>
+    .demo-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    .demo-section {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .demo-section h2 {
+      margin-top: 0;
+      color: var(--text-color);
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+    .demo-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .demo-btn {
+      padding: 10px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--primary-color);
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .demo-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+    .demo-btn.secondary {
+      background: var(--surface-color);
+      color: var(--text-color);
+    }
+    .info-box {
+      background: rgba(37, 99, 235, 0.1);
+      border-left: 3px solid var(--primary-color);
+      padding: 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    .info-box p {
+      margin: 0;
+      color: var(--text-color);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <div class="brand">
+        <span class="logo"></span>
+        <span>HireBridge</span>
+      </div>
+      <nav class="primary-nav">
+        <button class="btn notification-bell" onclick="HB.showNotifications()" title="Notifications" aria-label="Notifications">
+          <span>🔔</span>
+          <span class="notification-badge hidden" id="notificationBadge">0</span>
+        </button>
+        <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+        <a href="/frontend/public/index.html" class="btn">Back to Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="demo-container">
+    <h1 style="text-align: center; margin-bottom: 8px;">🔔 Notification System Demo</h1>
+    <p style="text-align: center; color: var(--text-secondary); margin-bottom: 32px;">
+      Test the HireBridge notification system with simulated notifications
+    </p>
+
+    <div class="info-box">
+      <p>
+        <strong>How to use:</strong> Click the buttons below to simulate different types of notifications.
+        Then click the 🔔 bell icon in the header to view them. This demo requires authentication to work with the real API.
+      </p>
+    </div>
+
+    <div class="demo-section">
+      <h2>📝 Application Notifications</h2>
+      <div class="demo-buttons">
+        <button class="demo-btn" onclick="simulateNotification('application_created')">
+          Application Submitted
+        </button>
+        <button class="demo-btn" onclick="simulateNotification('application_status_changed')">
+          Status Changed
+        </button>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2>🎯 Matching Notifications</h2>
+      <div class="demo-buttons">
+        <button class="demo-btn" onclick="simulateNotification('match_found')">
+          New Match Found
+        </button>
+        <button class="demo-btn" onclick="simulateNotification('match_recommendation')">
+          Job Recommendation
+        </button>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2>📅 Interview Notifications</h2>
+      <div class="demo-buttons">
+        <button class="demo-btn" onclick="simulateNotification('interview_scheduled')">
+          Interview Scheduled
+        </button>
+        <button class="demo-btn" onclick="simulateNotification('interview_reminder')">
+          Interview Reminder
+        </button>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2>💬 Message Notifications</h2>
+      <div class="demo-buttons">
+        <button class="demo-btn" onclick="simulateNotification('message_received')">
+          New Message
+        </button>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2>📄 CV & Other</h2>
+      <div class="demo-buttons">
+        <button class="demo-btn" onclick="simulateNotification('cv_processed')">
+          CV Processed
+        </button>
+        <button class="demo-btn" onclick="simulateNotification('payment_processed')">
+          Payment Successful
+        </button>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2>🎛️ System Actions</h2>
+      <div class="demo-buttons">
+        <button class="demo-btn secondary" onclick="openNotifications()">
+          Open Notification Panel
+        </button>
+        <button class="demo-btn secondary" onclick="refreshCount()">
+          Refresh Count
+        </button>
+        <button class="demo-btn secondary" onclick="markAllRead()">
+          Mark All Read
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+
+  <script>
+    const notificationTemplates = {
+      application_created: {
+        title: 'Application Submitted',
+        message: 'Your application for Frontend Developer at Tech Corp has been submitted successfully.',
+        type: 'application_created',
+        priority: 'normal'
+      },
+      application_status_changed: {
+        title: 'Application Status Updated',
+        message: 'Your application for Backend Engineer has been reviewed. Status: Under Review',
+        type: 'application_status_changed',
+        priority: 'high'
+      },
+      match_found: {
+        title: 'New Job Match!',
+        message: 'We found a perfect match for you: Full Stack Developer at Startup Inc.',
+        type: 'match_found',
+        priority: 'high',
+        actionUrl: '/frontend/public/job-seeker/jobs.html'
+      },
+      match_recommendation: {
+        title: 'Job Recommendation',
+        message: 'Based on your profile, you might like: UX Designer position at Design Studio',
+        type: 'match_recommendation',
+        priority: 'normal'
+      },
+      interview_scheduled: {
+        title: 'Interview Scheduled',
+        message: 'Your interview with Tech Corp is scheduled for Nov 20, 2025 at 2:00 PM',
+        type: 'interview_scheduled',
+        priority: 'urgent',
+        actionUrl: '/frontend/public/job-seeker/applications.html'
+      },
+      interview_reminder: {
+        title: 'Interview Reminder',
+        message: 'Reminder: Your interview starts in 1 hour',
+        type: 'interview_reminder',
+        priority: 'urgent'
+      },
+      message_received: {
+        title: 'New Message',
+        message: 'You have a new message from Tech Corp Recruiter',
+        type: 'message_received',
+        priority: 'high',
+        actionUrl: '/frontend/public/messaging.html'
+      },
+      cv_processed: {
+        title: 'CV Processed',
+        message: 'Your CV has been successfully processed. 12 skills extracted.',
+        type: 'cv_processed',
+        priority: 'normal'
+      },
+      payment_processed: {
+        title: 'Payment Successful',
+        message: 'Your payment of $29.99 for Premium Plan has been processed successfully.',
+        type: 'payment_processed',
+        priority: 'normal'
+      }
+    };
+
+    function simulateNotification(type) {
+      const template = notificationTemplates[type];
+      if (!template) return;
+
+      // Create notification object
+      const notification = {
+        _id: 'demo-' + Date.now(),
+        ...template,
+        read: false,
+        createdAt: new Date().toISOString()
+      };
+
+      // Trigger the notification event
+      const event = new CustomEvent('hb:notification:new', {
+        detail: notification
+      });
+      window.dispatchEvent(event);
+    }
+
+    function openNotifications() {
+      if (window.HB && window.HB.notifications) {
+        window.HB.notifications.openPanel();
+      }
+    }
+
+    function refreshCount() {
+      if (window.HB && window.HB.notifications) {
+        window.HB.notifications.fetchUnreadCount();
+      }
+    }
+
+    function markAllRead() {
+      if (window.HB && window.HB.notifications) {
+        window.HB.notifications.markAllRead();
+      }
+    }
+
+    // Auto-create a demo notification on page load
+    setTimeout(() => {
+      simulateNotification('match_found');
+    }, 1000);
+  </script>
+</body>
+</html>

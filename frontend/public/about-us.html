@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About Us • HireBridge</title>
+  <link rel="icon" type="image/svg+xml" href="/frontend/public/assets/images/hirebridge-logo-full.svg">
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <style>
+    .about-hero {
+      text-align: center;
+      padding: 80px 20px 60px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      margin: -16px -16px 60px;
+      border-radius: 0 0 32px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-hero::before{
+      content:'';
+      position:absolute;
+      top:-50%;
+      left:-50%;
+      width:600px;
+      height:600px;
+      background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .about-hero h1 {
+      font-size: 56px;
+      margin: 0 0 20px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      position: relative;
+    }
+    .about-hero p {
+      font-size: 22px;
+      margin: 0;
+      opacity: 0.95;
+      max-width: 700px;
+      margin: 0 auto;
+      position: relative;
+      font-weight: 500;
+    }
+    .mission-section {
+      text-align: center;
+      max-width: 900px;
+      margin: 0 auto 80px;
+      padding: 48px 32px;
+      background: var(--surface-color);
+      border-radius: 24px;
+      box-shadow: var(--card-shadow);
+    }
+    .mission-section h2 {
+      font-size: 40px;
+      margin-bottom: 24px;
+      color: var(--primary-color);
+      font-weight: 800;
+    }
+    .mission-section p {
+      font-size: 19px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+    .stats-section {
+      background: var(--surface-color);
+      border-radius: 24px;
+      padding: 60px 40px;
+      margin: 80px 0;
+      text-align: center;
+      box-shadow: var(--card-shadow);
+    }
+    .stats-section h2{
+      font-size: 40px;
+      margin: 0 0 12px;
+      font-weight: 800;
+    }
+    .stats-section > p{
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin: 0 0 40px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 40px;
+      margin-top: 40px;
+    }
+    .stat-item {
+      padding: 24px;
+      background: var(--background-color);
+      border-radius: 16px;
+      border: 2px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+    .stat-item:hover{
+      border-color: var(--primary-color);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(139,92,246,0.15);
+    }
+    .stat-item h4 {
+      font-size: 52px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0 0 8px;
+    }
+    .stat-item p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin: 0;
+      font-weight: 600;
+    }
+    .cta-section {
+      text-align: center;
+      padding: 60px 32px;
+      background: linear-gradient(135deg, #7c3aed, #14b8a6);
+      border-radius: 32px;
+      color: white;
+      margin: 80px 0 60px;
+      box-shadow: 0 20px 60px rgba(139,92,246,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before{
+      content:'';
+      position:absolute;
+      top:-50%;
+      right:-50%;
+      width:500px;
+      height:500px;
+      background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .cta-section h2 {
+      font-size: 42px;
+      margin: 0 0 20px;
+      font-weight: 900;
+      position: relative;
+    }
+    .cta-section p {
+      font-size: 20px;
+      margin: 0 0 32px;
+      opacity: 0.95;
+      position: relative;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cta-btn {
+      padding: 16px 40px;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 2px solid white;
+    }
+    .cta-btn.primary {
+      background: white;
+      color: #7c3aed;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+    .cta-btn.primary:hover{
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      transform: translateY(-3px) scale(1.02);
+    }
+    .cta-btn.secondary {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      backdrop-filter: blur(10px);
+    }
+    .cta-btn.secondary:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-3px);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="/frontend/public/index.html" class="brand" style="text-decoration: none; cursor: pointer;">
+        <span class="logo"></span>
+        <span>HireBridge</span>
+      </a>
+      <nav class="primary-nav">
+        <a href="/frontend/public/login.html">Login</a>
+        <a href="/frontend/public/register.html" class="btn">Sign up</a>
+        <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 1100px;">
+    <div class="about-hero">
+      <h1>Bridging Talent with Opportunity</h1>
+      <p>Empowering students, freelancers, and employers to connect, collaborate, and succeed in the modern workforce.</p>
+    </div>
+
+    <div class="mission-section">
+      <h2>Our Mission</h2>
+      <p>At HireBridge, we believe that everyone deserves access to meaningful career opportunities. We've built a cutting-edge platform that removes barriers between talented individuals and forward-thinking employers, creating a seamless ecosystem where skills meet needs, ambitions meet opportunities, and careers flourish.</p>
+    </div>
+
+
+    <h2 style="text-align: center; font-size: 40px; margin: 80px 0 48px; color: var(--text-color); font-weight: 800;">Technology Stack 💻</h2>
+    
+    <div style="background: var(--surface-color); border-radius: 24px; padding: 60px 40px; margin: 40px 0; box-shadow: var(--card-shadow);">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px;">
+        <div style="text-align: center; padding: 32px 24px; background: var(--background-color); border-radius: 20px; border: 2px solid var(--border-color); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(139,92,246,0.15)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+          <div style="font-size: 56px; margin-bottom: 16px;">⚡</div>
+          <h3 style="font-size: 22px; margin: 0 0 12px; color: var(--text-color); font-weight: 700;">16 Microservices</h3>
+          <p style="font-size: 15px; color: var(--text-secondary); margin: 0; line-height: 1.7;">User, Job, Matching, Application, Messaging, Notification, CV Processing, Chatbot, Interview, Review, Payment, Analytics & more</p>
+        </div>
+        <div style="text-align: center; padding: 32px 24px; background: var(--background-color); border-radius: 20px; border: 2px solid var(--border-color); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(139,92,246,0.15)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+          <div style="font-size: 56px; margin-bottom: 16px;">🗄️</div>
+          <h3 style="font-size: 22px; margin: 0 0 12px; color: var(--text-color); font-weight: 700;">Powerful Database</h3>
+          <p style="font-size: 15px; color: var(--text-secondary); margin: 0; line-height: 1.7;">MongoDB for flexible data, Redis for caching, RabbitMQ for message queuing</p>
+        </div>
+        <div style="text-align: center; padding: 32px 24px; background: var(--background-color); border-radius: 20px; border: 2px solid var(--border-color); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(139,92,246,0.15)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+          <div style="font-size: 56px; margin-bottom: 16px;">🐳</div>
+          <h3 style="font-size: 22px; margin: 0 0 12px; color: var(--text-color); font-weight: 700;">Containerized</h3>
+          <p style="font-size: 15px; color: var(--text-secondary); margin: 0; line-height: 1.7;">Docker Compose orchestration for easy deployment and scalability</p>
+        </div>
+        <div style="text-align: center; padding: 32px 24px; background: var(--background-color); border-radius: 20px; border: 2px solid var(--border-color); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 24px rgba(139,92,246,0.15)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+          <div style="font-size: 56px; margin-bottom: 16px;">🎨</div>
+          <h3 style="font-size: 22px; margin: 0 0 12px; color: var(--text-color); font-weight: 700;">Modern UI</h3>
+          <p style="font-size: 15px; color: var(--text-secondary); margin: 0; line-height: 1.7;">Responsive design with dark mode, gradient themes, and smooth animations</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="text-align: center; font-size: 40px; margin: 80px 0 48px; color: var(--text-color); font-weight: 800;">Our Values 💎</h2>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; margin: 40px 0;">
+      <div style="background: var(--surface-color); border: 2px solid var(--border-color); border-radius: 20px; padding: 32px; box-shadow: var(--card-shadow); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--card-shadow-hover)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='translateY(0)'; this.style.boxShadow='var(--card-shadow)';">
+        <h3 style="font-size: 24px; margin: 0 0 16px; color: var(--primary-color); font-weight: 700;">🎓 Student First</h3>
+        <p style="font-size: 16px; line-height: 1.7; color: var(--text-secondary); margin: 0;">We prioritize the needs of students and early-career professionals, making job search accessible and empowering.</p>
+      </div>
+      <div style="background: var(--surface-color); border: 2px solid var(--border-color); border-radius: 20px; padding: 32px; box-shadow: var(--card-shadow); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--card-shadow-hover)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='translateY(0)'; this.style.boxShadow='var(--card-shadow)';">
+        <h3 style="font-size: 24px; margin: 0 0 16px; color: var(--primary-color); font-weight: 700;">🚀 Innovation Driven</h3>
+        <p style="font-size: 16px; line-height: 1.7; color: var(--text-secondary); margin: 0;">We leverage cutting-edge AI and technology to solve real problems in the recruitment industry.</p>
+      </div>
+      <div style="background: var(--surface-color); border: 2px solid var(--border-color); border-radius: 20px; padding: 32px; box-shadow: var(--card-shadow); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--card-shadow-hover)';" onmouseout="this.style.borderColor='var(--border-color)'; this.style.transform='translateY(0)'; this.style.boxShadow='var(--card-shadow)';">
+        <h3 style="font-size: 24px; margin: 0 0 16px; color: var(--primary-color); font-weight: 700;">🤝 Transparency</h3>
+        <p style="font-size: 16px; line-height: 1.7; color: var(--text-secondary); margin: 0;">Honest company reviews, clear job descriptions, and fair matching algorithms build trust.</p>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h2 style="font-size: 32px; margin: 0 0 8px;">Our Platform by the Numbers 📊</h2>
+      <p style="color: var(--text-secondary); margin: 0;">Built for scale, designed for excellence</p>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <h4>10K+</h4>
+          <p>Active Students</p>
+        </div>
+        <div class="stat-item">
+          <h4>500+</h4>
+          <p>Companies</p>
+        </div>
+        <div class="stat-item">
+          <h4>5K+</h4>
+          <p>Job Listings</p>
+        </div>
+        <div class="stat-item">
+          <h4>95%</h4>
+          <p>Satisfaction</p>
+        </div>
+      </div>
+    </div>
+    <div class="cta-section">
+      <h2>Ready to Start Your Journey?</h2>
+      <p>Join thousands of candidates and employers who are already building their future with HireBridge.</p>
+      <div class="cta-buttons">
+        <a href="/frontend/public/register.html?type=seeker" class="cta-btn primary">Find Opportunities</a>
+        <a href="/frontend/public/register.html?type=employer" class="cta-btn secondary">Post a Job</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/router.js"></script>
+</body>
+</html>

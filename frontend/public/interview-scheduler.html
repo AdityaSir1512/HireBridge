@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Interview Scheduler • HireBridge</title>
+  <link rel="icon" type="image/svg+xml" href="/frontend/public/assets/images/hirebridge-logo-full.svg">
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <style>
+    .scheduler-hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      margin: -16px -16px 40px;
+      border-radius: 0 0 24px 24px;
+    }
+    .scheduler-hero h1 { font-size: 48px; margin: 0 0 16px; font-weight: 800; }
+    .scheduler-hero p { font-size: 20px; margin: 0; opacity: 0.95; }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin: 40px 0;
+    }
+    .feature-card {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .icon-big { font-size: 56px; margin-bottom: 16px; display: block; }
+    .feature-card h3 { font-size: 20px; margin: 0 0 12px; color: var(--text-color); }
+    .feature-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+    
+    .calendar-demo {
+      max-width: 800px;
+      margin: 40px auto;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 32px;
+    }
+    .calendar-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .calendar-header h3 { font-size: 24px; margin: 0 0 8px; color: var(--text-color); }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+    .day-header {
+      text-align: center;
+      padding: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    .day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--background-color);
+      border: 1px solid var(--border-color);
+    }
+    .day-cell:hover { background: rgba(139, 92, 246, 0.1); }
+    .day-cell.has-interview {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(20, 184, 166, 0.2));
+      border-color: var(--primary-color);
+      font-weight: 600;
+    }
+    
+    .upcoming-interviews {
+      margin-top: 32px;
+      padding: 24px;
+      background: var(--background-color);
+      border-radius: 16px;
+    }
+    .interview-item {
+      padding: 16px;
+      margin-bottom: 12px;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .interview-info h4 { margin: 0 0 4px; font-size: 16px; color: var(--text-color); }
+    .interview-info p { margin: 0; font-size: 14px; color: var(--text-secondary); }
+    .interview-time {
+      text-align: right;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="/frontend/public/index.html" class="brand" style="text-decoration: none; cursor: pointer;">
+        <span class="logo"></span>
+        <span>HireBridge</span>
+      </a>
+      <nav class="primary-nav">
+        <a href="/frontend/public/login.html">Login</a>
+        <a href="/frontend/public/register.html" class="btn">Sign up</a>
+        <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 1100px;">
+    <div class="scheduler-hero">
+      <h1>📅 Interview Scheduler</h1>
+      <p>Manage all your interviews in one place with smart reminders</p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <span class="icon-big">🗓️</span>
+        <h3>Easy Scheduling</h3>
+        <p>Pick your available slots and let employers book interviews instantly</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-big">🔔</span>
+        <h3>Smart Reminders</h3>
+        <p>Get notifications 24 hours and 1 hour before each interview</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-big">📧</span>
+        <h3>Auto Calendar Sync</h3>
+        <p>Sync with Google Calendar, Outlook, or download ICS files</p>
+      </div>
+      <div class="feature-card">
+        <span class="icon-big">🔗</span>
+        <h3>Video Call Links</h3>
+        <p>Automatically includes Zoom/Meet links for virtual interviews</p>
+      </div>
+    </div>
+
+    <h2 style="text-align: center; font-size: 32px; margin: 60px 0 32px; color: var(--text-color);">Your Interview Calendar</h2>
+
+    <div class="calendar-demo">
+      <div class="calendar-header">
+        <h3>November 2025</h3>
+      </div>
+      <div class="calendar-grid">
+        <div class="day-header">Sun</div>
+        <div class="day-header">Mon</div>
+        <div class="day-header">Tue</div>
+        <div class="day-header">Wed</div>
+        <div class="day-header">Thu</div>
+        <div class="day-header">Fri</div>
+        <div class="day-header">Sat</div>
+        
+        <div class="day-cell"></div>
+        <div class="day-cell"></div>
+        <div class="day-cell"></div>
+        <div class="day-cell"></div>
+        <div class="day-cell"></div>
+        <div class="day-cell"></div>
+        <div class="day-cell">1</div>
+        
+        <div class="day-cell">2</div>
+        <div class="day-cell">3</div>
+        <div class="day-cell">4</div>
+        <div class="day-cell">5</div>
+        <div class="day-cell">6</div>
+        <div class="day-cell">7</div>
+        <div class="day-cell">8</div>
+        
+        <div class="day-cell">9</div>
+        <div class="day-cell has-interview" title="Interview at 2:00 PM">10</div>
+        <div class="day-cell">11</div>
+        <div class="day-cell has-interview" title="Interview at 10:00 AM">12</div>
+        <div class="day-cell">13</div>
+        <div class="day-cell">14</div>
+        <div class="day-cell has-interview" title="Interview at 3:30 PM">15</div>
+        
+        <div class="day-cell">16</div>
+        <div class="day-cell">17</div>
+        <div class="day-cell">18</div>
+        <div class="day-cell">19</div>
+        <div class="day-cell">20</div>
+        <div class="day-cell">21</div>
+        <div class="day-cell">22</div>
+        
+        <div class="day-cell">23</div>
+        <div class="day-cell">24</div>
+        <div class="day-cell">25</div>
+        <div class="day-cell">26</div>
+        <div class="day-cell">27</div>
+        <div class="day-cell">28</div>
+        <div class="day-cell">29</div>
+        
+        <div class="day-cell">30</div>
+      </div>
+
+      <div class="upcoming-interviews">
+        <h3 style="margin: 0 0 16px; font-size: 20px; color: var(--text-color);">📌 Upcoming Interviews</h3>
+        
+        <div class="interview-item">
+          <div class="interview-info">
+            <h4>Frontend Developer - Tech Corp</h4>
+            <p>📍 Virtual (Zoom) • Sarah Johnson, HR Manager</p>
+          </div>
+          <div class="interview-time">
+            Nov 10<br>2:00 PM
+          </div>
+        </div>
+
+        <div class="interview-item">
+          <div class="interview-info">
+            <h4>Full Stack Intern - Startup XYZ</h4>
+            <p>📍 In-person, Bangalore • Mike Chen, CTO</p>
+          </div>
+          <div class="interview-time">
+            Nov 12<br>10:00 AM
+          </div>
+        </div>
+
+        <div class="interview-item">
+          <div class="interview-info">
+            <h4>React Developer - Innovation Labs</h4>
+            <p>📍 Virtual (Google Meet) • Emma Davis, Lead Engineer</p>
+          </div>
+          <div class="interview-time">
+            Nov 15<br>3:30 PM
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin: 60px 0 40px; padding: 48px 24px; background: var(--surface-color); border-radius: 20px;">
+      <h2 style="font-size: 32px; margin: 0 0 16px; color: var(--text-color);">🎯 Never Miss an Interview Again</h2>
+      <p style="font-size: 18px; margin: 0 0 24px; color: var(--text-secondary);">Sign up and manage all your interviews effortlessly</p>
+      <a href="/frontend/public/register.html?type=seeker" class="btn primary" style="padding: 14px 32px; font-size: 16px;">Create Free Account</a>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/router.js"></script>
+</body>
+</html>

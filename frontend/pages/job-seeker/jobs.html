@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Browse Jobs • Candidate</title>
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/job-seeker.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/notifications.css">
+  <style>
+    .page-container{max-width:1400px;margin:0 auto;padding:32px 48px;width:100%}
+    .page-header{margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .page-header h1{font-size:32px;font-weight:800;margin:0;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .filters-section{background:var(--surface-color);border-radius:20px;padding:24px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);margin-bottom:32px}
+    .filters-grid{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:16px;align-items:end}
+    .filter-group{display:flex;flex-direction:column;gap:8px}
+    .filter-label{font-size:13px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px}
+    .search-input{padding:14px 16px 14px 44px;border-radius:12px;border:2px solid var(--border-color);background:var(--background-color) url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%23888" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>') no-repeat 14px center;color:var(--text-color);font-size:15px;transition:all 0.3s ease;font-family:inherit}
+    .search-input:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(139,92,246,0.1)}
+    .filter-select{padding:14px 16px;border-radius:12px;border:2px solid var(--border-color);background:var(--background-color);color:var(--text-color);font-size:15px;transition:all 0.3s ease;font-family:inherit;cursor:pointer}
+    .filter-select:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(139,92,246,0.1)}
+    .btn-filter{padding:14px 24px;border-radius:12px;border:none;background:var(--accent-gradient);color:#fff;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.3s ease;box-shadow:0 4px 20px rgba(139,92,246,0.3)}
+    .btn-filter:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(139,92,246,0.4)}
+    .jobs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+    .job-card{background:var(--surface-color);border-radius:20px;padding:28px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);transition:all 0.3s ease;cursor:pointer;display:flex;flex-direction:column;gap:16px}
+    .job-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.15)}
+    .job-header{display:flex;align-items:start;justify-content:space-between;gap:12px}
+    .company-logo{width:56px;height:56px;border-radius:14px;background:var(--accent-gradient);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;flex-shrink:0}
+    .job-info{flex:1;min-width:0}
+    .job-title{font-size:18px;font-weight:700;color:var(--text-color);margin:0 0 6px 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .company-name{font-size:14px;color:var(--text-secondary);margin:0}
+    .job-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+    .meta-badge{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px}
+    .badge-type{background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(20,184,166,0.15));color:var(--primary-color)}
+    .badge-location{background:var(--background-color);color:var(--text-secondary)}
+    .badge-salary{background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.15));color:#059669}
+    .job-description{font-size:14px;line-height:1.6;color:var(--text-secondary);margin:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+    .job-skills{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .skill-tag{padding:4px 10px;border-radius:6px;font-size:12px;font-weight:500;background:var(--background-color);color:var(--text-color);border:1px solid var(--border-color)}
+    .job-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:16px;border-top:1px solid var(--border-color)}
+    .job-time{font-size:12px;color:var(--text-secondary)}
+    .job-actions{display:flex;gap:8px}
+    .btn-save{padding:8px 12px;border-radius:8px;border:2px solid var(--border-color);background:transparent;color:var(--text-color);cursor:pointer;transition:all 0.3s ease;font-size:18px}
+    .btn-save:hover{border-color:var(--primary-color);background:rgba(139,92,246,0.1)}
+    .btn-save.saved{border-color:var(--primary-color);background:rgba(139,92,246,0.1);color:var(--primary-color)}
+    .btn-apply{padding:8px 20px;border-radius:8px;border:none;background:var(--accent-gradient);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s ease}
+    .btn-apply:hover{transform:scale(1.05)}
+    .empty-state{text-align:center;padding:80px 20px;color:var(--text-secondary)}
+    .empty-state .icon{font-size:64px;margin-bottom:16px}
+    .empty-state h3{font-size:20px;font-weight:700;color:var(--text-color);margin:0 0 8px 0}
+    .loading{text-align:center;padding:60px;color:var(--text-secondary);font-size:16px}
+    @media (max-width: 768px) {
+      .filters-grid{grid-template-columns:1fr;gap:12px}
+      .jobs-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="nav-job-seeker">
+    <a href="/frontend/pages/job-seeker/dashboard.html" class="nav-brand" title="Go to Dashboard">
+      <img src="/frontend/public/assets/images/hirebridge-logo-full.svg" alt="HireBridge Logo">
+      <span class="nav-brand-text">HireBridge • Candidate</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="/frontend/pages/job-seeker/dashboard.html">Dashboard</a>
+      <a href="/frontend/pages/job-seeker/jobs.html" style="background:var(--background-color)">Jobs</a>
+      <a href="/frontend/pages/job-seeker/applications.html">Applications</a>
+      <a href="/frontend/pages/job-seeker/saved.html">Saved</a>
+      <a href="/frontend/pages/job-seeker/profile.html">Profile</a>
+      <a href="/frontend/pages/job-seeker/settings.html">Settings</a>
+      <button class="btn-messages" onclick="window.location.href='/frontend/pages/job-seeker/messages.html'" title="Messages" aria-label="Messages">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z"/>
+          <path d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0015.75 7.5z"/>
+        </svg>
+        <span>Messages</span>
+        <span class="message-badge" id="messageBadge" style="display: none;">0</span>
+      </button>
+      <button class="btn notification-bell" onclick="HB.showNotifications()" title="Notifications">
+        <span>🔔</span>
+        <span class="notification-badge">3</span>
+      </button>
+      <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="btn-logout" onclick="HB.logout()" title="Logout" aria-label="Logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <div class="page-header">
+      <h1>Browse Jobs 💼</h1>
+    </div>
+
+    <div class="filters-section">
+      <div class="filters-grid">
+        <div class="filter-group">
+          <label class="filter-label">Search Jobs</label>
+          <input type="text" class="search-input" id="searchInput" placeholder="Job title, skills, company...">
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Job Type</label>
+          <select class="filter-select" id="jobTypeFilter">
+            <option value="">All Types</option>
+            <option value="full_time">Full-time</option>
+            <option value="freelancing">Freelancer</option>
+            <option value="internship">Internship</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">Location</label>
+          <select class="filter-select" id="locationFilter">
+            <option value="">All Locations</option>
+            <option value="remote">Remote</option>
+            <option value="onsite">On-site</option>
+            <option value="hybrid">Hybrid</option>
+          </select>
+        </div>
+        <button class="btn-filter" onclick="applyFilters()">Search</button>
+      </div>
+    </div>
+
+    <div id="jobsGrid" class="jobs-grid">
+      <div class="loading">🔍 Loading jobs...</div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script>
+    let allJobs = [];
+    const savedJobs = new Set(JSON.parse(localStorage.getItem('savedJobs') || '[]'));
+
+    async function loadJobs() {
+      const grid = document.getElementById('jobsGrid');
+      try {
+        const data = await HB.api.listJobs();
+        allJobs = Array.isArray(data?.jobs) ? data.jobs : (Array.isArray(data) ? data : []);
+        
+        if (!allJobs.length) {
+          grid.innerHTML = `
+            <div class="empty-state">
+              <div class="icon">📭</div>
+              <h3>No jobs available</h3>
+              <p>Check back later for new opportunities</p>
+            </div>
+          `;
+          return;
+        }
+        
+        renderJobs(allJobs);
+      } catch (err) {
+        console.error('Load jobs error:', err);
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">⚠️</div>
+            <h3>Failed to load jobs</h3>
+            <p>${err.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderJobs(jobs) {
+      const grid = document.getElementById('jobsGrid');
+      if (!jobs.length) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">🔍</div>
+            <h3>No jobs match your filters</h3>
+            <p>Try adjusting your search criteria</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = jobs.map(job => {
+        const isSaved = savedJobs.has(job._id || job.id);
+        const skills = job.skills || [];
+        const salary = job.salaryMin && job.salaryMax ? `$${job.salaryMin}k - $${job.salaryMax}k` : '';
+        const companyInitial = (job.company?.name || 'C')[0].toUpperCase();
+        
+        return `
+          <div class="job-card" onclick="viewJob('${job._id || job.id}')">
+            <div class="job-header">
+              <div class="company-logo">${companyInitial}</div>
+              <div class="job-info">
+                <h3 class="job-title">${job.title || 'Untitled'}</h3>
+                <p class="company-name">${job.company?.name || 'Company'}</p>
+              </div>
+            </div>
+            
+            <div class="job-meta">
+              <span class="meta-badge badge-type">💼 ${formatJobType(job.jobType)}</span>
+              ${job.location ? `<span class="meta-badge badge-location">📍 ${job.location}</span>` : ''}
+              ${salary ? `<span class="meta-badge badge-salary">💰 ${salary}</span>` : ''}
+            </div>
+            
+            <p class="job-description">${job.description || 'No description available'}</p>
+            
+            ${skills.length ? `
+              <div class="job-skills">
+                ${skills.slice(0, 5).map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+                ${skills.length > 5 ? `<span class="skill-tag">+${skills.length - 5} more</span>` : ''}
+              </div>
+            ` : ''}
+            
+            <div class="job-footer">
+              <span class="job-time">⏱️ ${formatTime(job.createdAt)}</span>
+              <div class="job-actions">
+                <button class="btn-save ${isSaved ? 'saved' : ''}" onclick="toggleSave(event, '${job._id || job.id}')" title="${isSaved ? 'Unsave' : 'Save'}">
+                  ${isSaved ? '❤️' : '🤍'}
+                </button>
+                <button class="btn-apply" onclick="applyToJob(event, '${job._id || job.id}')">Apply</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function formatJobType(type) {
+      const types = {
+        'full_time': 'Full-time',
+        'freelancing': 'Freelancer',
+        'internship': 'Internship'
+      };
+      return types[type] || type;
+    }
+
+    function formatTime(date) {
+      if (!date) return 'Recently';
+      const days = Math.floor((new Date() - new Date(date)) / (1000 * 60 * 60 * 24));
+      if (days === 0) return 'Today';
+      if (days === 1) return 'Yesterday';
+      if (days < 7) return `${days} days ago`;
+      if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
+      return `${Math.floor(days / 30)} months ago`;
+    }
+
+    function toggleSave(event, jobId) {
+      event.stopPropagation();
+      if (savedJobs.has(jobId)) {
+        savedJobs.delete(jobId);
+      } else {
+        savedJobs.add(jobId);
+      }
+      saveSavedJobIds(savedJobs);
+      renderJobs(filterJobs());
+    }
+
+    function viewJob(jobId) {
+      HB.navigateTo(`/frontend/pages/job-seeker/job-detail.html?id=${jobId}`);
+    }
+
+    function applyToJob(event, jobId) {
+      event.stopPropagation();
+      HB.navigateTo(`/frontend/pages/job-seeker/job-detail.html?id=${jobId}&apply=true`);
+    }
+
+    function filterJobs() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const jobType = document.getElementById('jobTypeFilter').value;
+      const location = document.getElementById('locationFilter').value;
+
+      return allJobs.filter(job => {
+        const matchSearch = !search || 
+          job.title?.toLowerCase().includes(search) ||
+          job.description?.toLowerCase().includes(search) ||
+          job.company?.name?.toLowerCase().includes(search) ||
+          job.skills?.some(s => s.toLowerCase().includes(search));
+        
+        const matchType = !jobType || job.jobType === jobType;
+        const matchLocation = !location || job.location?.toLowerCase().includes(location.toLowerCase());
+
+        return matchSearch && matchType && matchLocation;
+      });
+    }
+
+    function applyFilters() {
+      renderJobs(filterJobs());
+    }
+
+    document.getElementById('searchInput').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') applyFilters();
+    });
+
+    window.addEventListener('DOMContentLoaded', loadJobs);
+  </script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/chatbot.js"></script>
+</body>
+</html>

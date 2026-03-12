@@ -1,0 +1,333 @@
+version: '3.9'
+
+networks:
+  hirebridge:
+    driver: bridge
+
+volumes:
+  mongodb-data:
+  redis-data:
+  rabbitmq-data:
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: hb-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      api-gateway:
+        condition: service_started
+    networks:
+      - hirebridge
+  mongodb:
+    image: mongo:7.0
+    container_name: hb-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    networks:
+      - hirebridge
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.runCommand({ ping: 1 })"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: hb-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - hirebridge
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: hb-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - hirebridge
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api-gateway:
+    build: ./services/api-gateway
+    container_name: hb-api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      FRONTEND_URL: http://localhost:8080
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: changeme
+      USER_SERVICE_URL: http://user-service:3001
+      JOB_SERVICE_URL: http://job-service:3002
+      MATCHING_SERVICE_URL: http://matching-service:3003
+      APPLICATION_SERVICE_URL: http://application-service:3004
+      NOTIFICATION_SERVICE_URL: http://notification-service:3005
+      CV_SERVICE_URL: http://cv-processing-service:3006
+      CHATBOT_SERVICE_URL: http://chatbot-service:3007
+      MESSAGING_SERVICE_URL: http://messaging-service:3009
+      INTERVIEW_SERVICE_URL: http://interview-scheduling-service:3011
+      REVIEW_SERVICE_URL: http://review-rating-service:3013
+      PAYMENT_SERVICE_URL: http://payment-billing-service:3014
+      ANALYTICS_SERVICE_URL: http://analytics-service:3015
+      ADMIN_SERVICE_URL: http://admin-service:3016
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  user-service:
+    build: ./services/user-service
+    container_name: hb-user-service
+    environment:
+      PORT: 3001
+      DB_URL: mongodb://mongodb:27017/hirebridge_users
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      JWT_SECRET: changeme
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  job-service:
+    build: ./services/job-service
+    container_name: hb-job-service
+    environment:
+      PORT: 3002
+      DB_URL: mongodb://mongodb:27017/hirebridge_jobs
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      JWT_SECRET: changeme
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  matching-service:
+    build: ./services/matching-service
+    container_name: hb-matching-service
+    environment:
+      PORT: 3003
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      JWT_SECRET: changeme
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  application-service:
+    build: ./services/application-service
+    container_name: hb-application-service
+    environment:
+      PORT: 3004
+      DB_URL: mongodb://mongodb:27017/hirebridge_applications
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      JWT_SECRET: changeme
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  notification-service:
+    build: ./services/notification-service
+    container_name: hb-notification-service
+    environment:
+      PORT: 3005
+      DB_URL: mongodb://mongodb:27017/hirebridge_notifications
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  cv-processing-service:
+    build: ./services/cv-processing-service
+    container_name: hb-cv-service
+    environment:
+      PORT: 3006
+      DB_URL: mongodb://mongodb:27017/hirebridge_cv
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      FILE_STORAGE_PATH: /app/uploads/cv
+    volumes:
+      - ./services/cv-processing-service/uploads:/app/uploads
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  chatbot-service:
+    build: ./services/chatbot-service
+    container_name: hb-chatbot-service
+    environment:
+      PORT: 3007
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      JWT_SECRET: changeme
+    depends_on:
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  messaging-service:
+    build: ./services/messaging-service
+    container_name: hb-messaging-service
+    environment:
+      PORT: 3009
+      DB_URL: mongodb://mongodb:27017/hirebridge_messaging
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      JWT_SECRET: changeme
+    volumes:
+      - ./services/messaging-service/uploads:/app/uploads
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  interview-scheduling-service:
+    build: ./services/interview-scheduling-service
+    container_name: hb-interview-service
+    environment:
+      PORT: 3011
+      DB_URL: mongodb://mongodb:27017/hirebridge_interviews
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  review-rating-service:
+    build: ./services/review-rating-service
+    container_name: hb-review-service
+    environment:
+      PORT: 3013
+      DB_URL: mongodb://mongodb:27017/hirebridge_reviews
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  payment-billing-service:
+    build: ./services/payment-billing-service
+    container_name: hb-payment-service
+    environment:
+      PORT: 3014
+      DB_URL: mongodb://mongodb:27017/hirebridge_payments
+      RABBITMQ_URL: amqp://rabbitmq:5672
+      STRIPE_SECRET_KEY: changeme
+      STRIPE_PUBLISHABLE_KEY: changeme
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  analytics-service:
+    build: ./services/analytics-service
+    container_name: hb-analytics-service
+    environment:
+      PORT: 3015
+      DB_URL: mongodb://mongodb:27017/hirebridge_analytics
+      REDIS_URL: redis://redis:6379
+      RABBITMQ_URL: amqp://rabbitmq:5672
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge
+
+  admin-service:
+    build: ./services/admin-service
+    container_name: hb-admin-service
+    environment:
+      PORT: 3016
+      DB_URL: mongodb://mongodb:27017/hirebridge_admin
+      RABBITMQ_URL: amqp://rabbitmq:5672
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - hirebridge

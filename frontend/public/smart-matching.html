@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Matching • HireBridge</title>
+  <link rel="icon" type="image/svg+xml" href="/frontend/public/assets/images/hirebridge-logo-full.svg">
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <style>
+    .matching-hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      margin: -16px -16px 40px;
+      border-radius: 0 0 24px 24px;
+    }
+    .matching-hero h1 { font-size: 48px; margin: 0 0 16px; font-weight: 800; }
+    .matching-hero p { font-size: 20px; margin: 0; opacity: 0.95; }
+    
+    .how-it-works {
+      max-width: 900px;
+      margin: 40px auto;
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 24px;
+      margin-top: 32px;
+    }
+    .step-card {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+    }
+    .step-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      margin: 0 auto 16px;
+    }
+    .step-card h3 { font-size: 20px; margin: 0 0 12px; color: var(--text-color); }
+    .step-card p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+    
+    .demo-section {
+      margin: 60px 0 40px;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 32px;
+      margin: 0 0 32px;
+      color: var(--text-color);
+    }
+    .demo-container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 32px;
+    }
+    .profile-input {
+      margin-bottom: 24px;
+    }
+    .profile-input label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text-color);
+      font-size: 14px;
+    }
+    .profile-input input,
+    .profile-input select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 15px;
+      background: var(--background-color);
+      color: var(--text-color);
+    }
+    .skills-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .skill-chip {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(20, 184, 166, 0.15));
+      color: var(--primary-color);
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .skill-chip.selected {
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+    }
+    .match-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 24px;
+    }
+    .match-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+    }
+    
+    .results {
+      display: none;
+      margin-top: 32px;
+    }
+    .job-card {
+      background: var(--background-color);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .job-card:hover {
+      border-color: var(--primary-color);
+      box-shadow: 0 4px 16px rgba(139, 92, 246, 0.1);
+    }
+    .job-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 12px;
+    }
+    .job-title { font-size: 20px; font-weight: 700; margin: 0 0 4px; color: var(--text-color); }
+    .company-name { font-size: 14px; color: var(--text-secondary); margin: 0; }
+    .match-score {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.25));
+      color: #22c55e;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .job-meta {
+      display: flex;
+      gap: 16px;
+      margin: 12px 0;
+      flex-wrap: wrap;
+    }
+    .meta-tag {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .job-description {
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin: 12px 0;
+      font-size: 15px;
+    }
+    .required-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .skill-tag {
+      padding: 6px 12px;
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--primary-color);
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .skill-tag.matched {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(20, 184, 166, 0.2));
+    }
+    
+    .processing {
+      display: none;
+      text-align: center;
+      padding: 40px;
+    }
+    .spinner {
+      border: 4px solid var(--border-color);
+      border-top: 4px solid var(--primary-color);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="/frontend/public/index.html" class="brand" style="text-decoration: none; cursor: pointer;">
+        <span class="logo"></span>
+        <span>HireBridge</span>
+      </a>
+      <nav class="primary-nav">
+        <a href="/frontend/public/login.html">Login</a>
+        <a href="/frontend/public/register.html" class="btn">Sign up</a>
+        <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 1100px;">
+    <div class="matching-hero">
+      <h1>🎯 Smart Matching</h1>
+      <p>AI-powered algorithm finds your perfect opportunities</p>
+    </div>
+
+    <div class="how-it-works">
+      <h2 class="section-title">How Smart Matching Works</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Analyze Your Profile</h3>
+          <p>Our AI analyzes your skills, experience, education, and preferences</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>Match with Jobs</h3>
+          <p>Algorithm compares your profile with thousands of job listings</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Get Ranked Results</h3>
+          <p>Jobs are ranked by match score - see best fits first</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2 class="section-title">Try It Now - See Your Matches</h2>
+      <div class="demo-container">
+        <div class="profile-input">
+          <label>Your Name</label>
+          <input type="text" id="userName" placeholder="Enter your name">
+        </div>
+
+        <div class="profile-input">
+          <label>Job Type Preference</label>
+          <select id="jobType">
+            <option value="internship">Internship</option>
+            <option value="freelancer">Freelancer</option>
+            <option value="full-time">Full-time</option>
+          </select>
+        </div>
+
+        <div class="profile-input">
+          <label>Select Your Skills (click to toggle)</label>
+          <div class="skills-input" id="skillsContainer">
+            <span class="skill-chip" data-skill="JavaScript">JavaScript</span>
+            <span class="skill-chip" data-skill="React">React</span>
+            <span class="skill-chip" data-skill="Node.js">Node.js</span>
+            <span class="skill-chip" data-skill="Python">Python</span>
+            <span class="skill-chip" data-skill="Java">Java</span>
+            <span class="skill-chip" data-skill="SQL">SQL</span>
+            <span class="skill-chip" data-skill="UI/UX">UI/UX</span>
+            <span class="skill-chip" data-skill="MongoDB">MongoDB</span>
+            <span class="skill-chip" data-skill="Docker">Docker</span>
+            <span class="skill-chip" data-skill="AWS">AWS</span>
+          </div>
+        </div>
+
+        <button class="match-btn" onclick="findMatches()">🔍 Find My Matches</button>
+
+        <div class="processing" id="processing">
+          <div class="spinner"></div>
+          <p style="color: var(--text-secondary);">AI is analyzing your profile...</p>
+        </div>
+
+        <div class="results" id="results">
+          <h3 style="font-size: 24px; margin: 0 0 20px; color: var(--text-color);">✨ Your Top Matches</h3>
+          <div id="jobsList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin: 60px 0 40px; padding: 48px 24px; background: var(--surface-color); border-radius: 20px;">
+      <h2 style="font-size: 32px; margin: 0 0 16px; color: var(--text-color);">🚀 Get Personalized Job Matches Daily</h2>
+      <p style="font-size: 18px; margin: 0 0 24px; color: var(--text-secondary);">Sign up to receive AI-powered job recommendations based on your profile</p>
+      <a href="/frontend/public/register.html?type=seeker" class="btn primary" style="padding: 14px 32px; font-size: 16px;">Create Free Account</a>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script>
+    // Skill selection
+    const skillChips = document.querySelectorAll('.skill-chip');
+    const selectedSkills = new Set();
+
+    skillChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.classList.toggle('selected');
+        const skill = chip.getAttribute('data-skill');
+        if (chip.classList.contains('selected')) {
+          selectedSkills.add(skill);
+        } else {
+          selectedSkills.delete(skill);
+        }
+      });
+    });
+
+    // Sample job data
+    const jobs = [
+      {
+        title: "Frontend Developer Intern",
+        company: "Tech Corp",
+        location: "Bangalore",
+        type: "internship",
+        salary: "₹15K-25K/month",
+        description: "Build modern web applications using React and TypeScript. Work with experienced developers on real projects.",
+        skills: ["JavaScript", "React", "UI/UX", "HTML/CSS"],
+        posted: "2 days ago"
+      },
+      {
+        title: "Full Stack Developer",
+        company: "Innovation Labs",
+        location: "Remote",
+        type: "full-time",
+        salary: "₹6-10 LPA",
+        description: "Join our product team to build scalable web applications. Work with Node.js, React, and MongoDB.",
+        skills: ["JavaScript", "React", "Node.js", "MongoDB"],
+        posted: "1 week ago"
+      },
+      {
+        title: "UI/UX Designer",
+        company: "Design Studio Pro",
+        location: "Mumbai",
+        type: "freelancer",
+        salary: "₹20K-40K/project",
+        description: "Design beautiful user interfaces for mobile and web applications. Portfolio required.",
+        skills: ["UI/UX", "Figma", "Adobe XD"],
+        posted: "3 days ago"
+      },
+      {
+        title: "Backend Developer Intern",
+        company: "Startup XYZ",
+        location: "Hyderabad",
+        type: "internship",
+        salary: "₹12K-20K/month",
+        description: "Work on RESTful APIs and microservices using Node.js and Python. Learn cloud deployment.",
+        skills: ["Node.js", "Python", "SQL", "AWS"],
+        posted: "5 days ago"
+      },
+      {
+        title: "Python Developer",
+        company: "Data Solutions Inc",
+        location: "Pune",
+        type: "full-time",
+        salary: "₹5-8 LPA",
+        description: "Build data processing pipelines and automation scripts. Experience with Django or Flask preferred.",
+        skills: ["Python", "SQL", "Docker"],
+        posted: "1 day ago"
+      }
+    ];
+
+    function findMatches() {
+      const userName = document.getElementById('userName').value.trim();
+      const jobType = document.getElementById('jobType').value;
+      const processing = document.getElementById('processing');
+      const results = document.getElementById('results');
+      const jobsList = document.getElementById('jobsList');
+
+      if (!userName) {
+        alert('Please enter your name');
+        return;
+      }
+
+      if (selectedSkills.size === 0) {
+        alert('Please select at least one skill');
+        return;
+      }
+
+      // Show processing
+      processing.style.display = 'block';
+      results.style.display = 'none';
+
+      // Simulate AI processing
+      setTimeout(() => {
+        // Filter and score jobs
+        const userSkillsArray = Array.from(selectedSkills);
+        const matchedJobs = jobs
+          .filter(job => job.type === jobType)
+          .map(job => {
+            const matchedSkillsCount = job.skills.filter(skill => 
+              userSkillsArray.some(userSkill => skill.includes(userSkill) || userSkill.includes(skill))
+            ).length;
+            const matchScore = Math.round((matchedSkillsCount / job.skills.length) * 100);
+            return { ...job, matchScore, matchedSkillsCount };
+          })
+          .sort((a, b) => b.matchScore - a.matchScore);
+
+        // Display results
+        processing.style.display = 'none';
+        results.style.display = 'block';
+
+        if (matchedJobs.length === 0) {
+          jobsList.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No matches found for your criteria. Try selecting different skills or job type.</p>';
+          return;
+        }
+
+        jobsList.innerHTML = matchedJobs.map(job => `
+          <div class="job-card" onclick="viewJob('${job.title}')">
+            <div class="job-header">
+              <div>
+                <h3 class="job-title">${job.title}</h3>
+                <p class="company-name">${job.company} • ${job.location}</p>
+              </div>
+              <div class="match-score">${job.matchScore}% Match</div>
+            </div>
+            <div class="job-meta">
+              <span class="meta-tag">💼 ${job.type}</span>
+              <span class="meta-tag">💰 ${job.salary}</span>
+              <span class="meta-tag">🕒 ${job.posted}</span>
+            </div>
+            <p class="job-description">${job.description}</p>
+            <div class="required-skills">
+              ${job.skills.map(skill => {
+                const isMatched = userSkillsArray.some(userSkill => skill.includes(userSkill) || userSkill.includes(skill));
+                return `<span class="skill-tag ${isMatched ? 'matched' : ''}">${isMatched ? '✓ ' : ''}${skill}</span>`;
+              }).join('')}
+            </div>
+          </div>
+        `).join('');
+
+        // Scroll to results
+        results.scrollIntoView({ behavior: 'smooth' });
+      }, 2000);
+    }
+
+    function viewJob(title) {
+      alert(`📋 Full job details coming soon!\n\nJob: ${title}\n\nSign up to:\n• Apply instantly\n• Save jobs\n• Chat with recruiters\n• Track applications`);
+      setTimeout(() => {
+        window.location.href = '/frontend/public/register.html?type=seeker';
+      }, 1500);
+    }
+  </script>
+</body>
+</html>

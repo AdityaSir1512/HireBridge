@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Seeker • Dashboard</title>
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/job-seeker.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/notifications.css">
+  <style>
+    .dashboard-container{max-width:1400px;margin:0 auto;padding:32px 48px;width:100%}
+    .dashboard-header{margin-bottom:40px}
+    .dashboard-header h1{font-size:36px;font-weight:800;margin:0 0 8px 0;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .dashboard-header .subtitle{color:var(--text-secondary);font-size:16px}
+    
+    /* Stats Cards */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-bottom:40px}
+    .stat-card{background:var(--surface-color);border-radius:16px;padding:24px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);transition:all 0.3s ease;position:relative;overflow:hidden}
+    .stat-card:hover{transform:translateY(-4px);box-shadow:var(--card-shadow-hover)}
+    .stat-card::before{content:'';position:absolute;top:0;right:0;width:100px;height:100px;background:var(--accent-gradient);opacity:0.05;border-radius:50%;transform:translate(30%,-30%)}
+    .stat-card .stat-icon{font-size:32px;margin-bottom:12px;display:block}
+    .stat-card .stat-value{font-size:32px;font-weight:700;color:var(--text-color);margin:8px 0}
+    .stat-card .stat-label{color:var(--text-secondary);font-size:14px;font-weight:500}
+    .stat-card .stat-change{font-size:13px;margin-top:8px;color:#10b981;font-weight:600}
+    .stat-card .stat-change.negative{color:#ef4444}
+    
+    /* Action Cards */
+    .action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:40px}
+    .action-card{background:var(--surface-color);border-radius:20px;padding:32px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);transition:all 0.3s cubic-bezier(0.4,0,0.2,1);cursor:pointer;position:relative;overflow:hidden}
+    .action-card:hover{transform:translateY(-6px);box-shadow:var(--card-shadow-hover);border-color:var(--primary-color)}
+    .action-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--accent-gradient);transform:scaleX(0);transition:transform 0.3s ease}
+    .action-card:hover::after{transform:scaleX(1)}
+    .action-card .card-icon{font-size:48px;margin-bottom:16px;display:block;filter:drop-shadow(0 2px 8px rgba(139,92,246,0.3))}
+    .action-card .card-content{flex:1}
+    .action-card h3{font-size:22px;font-weight:700;margin:0 0 12px 0;color:var(--text-color)}
+    .action-card p{color:var(--text-secondary);margin:0 0 20px 0;font-size:15px;line-height:1.6}
+    .action-card .card-btn{background:var(--accent-gradient);color:#fff;border:none;padding:12px 24px;border-radius:12px;font-weight:600;font-size:15px;cursor:pointer;transition:all 0.3s ease;display:inline-flex;align-items:center;gap:8px}
+    .action-card .card-btn:hover{transform:translateX(4px);box-shadow:0 4px 20px rgba(139,92,246,0.4)}
+    .action-card .card-badge{position:absolute;top:20px;right:20px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;box-shadow:0 2px 8px rgba(239,68,68,0.3)}
+    
+    /* Activity Feed */
+    .activity-section{background:var(--surface-color);border-radius:20px;padding:32px;border:1px solid var(--border-color);box-shadow:var(--card-shadow)}
+    .activity-section h2{font-size:24px;font-weight:700;margin:0 0 24px 0;display:flex;align-items:center;gap:12px}
+    .activity-section h2 .icon{font-size:28px}
+    .activity-item{display:flex;gap:16px;padding:16px;border-radius:12px;margin-bottom:12px;transition:all 0.2s ease;border:1px solid transparent}
+    .activity-item:hover{background:var(--background-color);border-color:var(--border-color)}
+    .activity-item .activity-icon{width:48px;height:48px;border-radius:12px;background:var(--accent-gradient);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+    .activity-item .activity-content{flex:1}
+    .activity-item .activity-title{font-weight:600;margin:0 0 4px 0;color:var(--text-color)}
+    .activity-item .activity-desc{color:var(--text-secondary);font-size:14px;margin:0}
+    .activity-item .activity-time{color:var(--text-secondary);font-size:13px;white-space:nowrap}
+    
+    /* Quick Links */
+    .quick-links{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-top:32px}
+    .quick-link{background:var(--surface-color);border:1px solid var(--border-color);border-radius:16px;padding:20px;text-align:center;transition:all 0.3s ease;cursor:pointer;text-decoration:none;color:var(--text-color)}
+    .quick-link:hover{transform:translateY(-4px);box-shadow:var(--card-shadow-hover);border-color:var(--primary-color)}
+    .quick-link .icon{font-size:36px;margin-bottom:8px;display:block}
+    .quick-link .label{font-size:14px;font-weight:600}
+  </style>
+</head>
+<body>
+  <header class="nav-job-seeker">
+    <a href="/frontend/pages/job-seeker/dashboard.html" class="nav-brand" title="Go to Dashboard">
+      <img src="/frontend/public/assets/images/hirebridge-logo-full.svg" alt="HireBridge Logo">
+      <span class="nav-brand-text">HireBridge • Candidate</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="/frontend/pages/job-seeker/jobs.html">Jobs</a>
+      <a href="/frontend/pages/job-seeker/applications.html">Applications</a>
+      <a href="/frontend/pages/job-seeker/saved.html">Saved</a>
+      <a href="/frontend/pages/job-seeker/profile.html">Profile</a>
+      <a href="/frontend/pages/job-seeker/settings.html">Settings</a>
+      <button class="btn-messages" onclick="window.location.href='/frontend/pages/job-seeker/messages.html'" title="Messages" aria-label="Messages">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z"/>
+          <path d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0015.75 7.5z"/>
+        </svg>
+        <span>Messages</span>
+        <span class="message-badge" id="messageBadge" style="display: none;">0</span>
+      </button>
+      <button class="btn notification-bell" onclick="HB.showNotifications()" title="Notifications" aria-label="Notifications">
+        <span>🔔</span>
+        <span class="notification-badge" id="notificationBadge">3</span>
+      </button>
+      <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="btn-logout" onclick="HB.logout()" title="Logout" aria-label="Logout">Logout</button>
+    </nav>
+  </header>
+  
+  <main class="dashboard-container">
+    <div class="dashboard-header">
+      <h1 id="welcomeMessage">Welcome back! 👋</h1>
+      <p class="subtitle">Here's what's happening with your job search today</p>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-icon">📊</span>
+        <div class="stat-value" id="statApplications">0</div>
+        <div class="stat-label">Active Applications</div>
+        <div class="stat-change" id="statApplicationsChange">Loading...</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">💼</span>
+        <div class="stat-value" id="statMatches">0</div>
+        <div class="stat-label">New Matches</div>
+        <div class="stat-change" id="statMatchesChange">Loading...</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">⭐</span>
+        <div class="stat-value" id="statSaved">0</div>
+        <div class="stat-label">Saved Jobs</div>
+        <div class="stat-change" id="statSavedChange">Loading...</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon">🔥</span>
+        <div class="stat-value" id="statProfile">0%</div>
+        <div class="stat-label">Profile Strength</div>
+        <div class="stat-change" id="statProfileChange">Calculating...</div>
+      </div>
+    </div>
+
+    <!-- Action Cards -->
+    <div class="action-grid">
+      <div class="action-card" onclick="window.location.href='/frontend/pages/job-seeker/jobs.html'">
+        <span class="card-badge">HOT 🔥</span>
+        <span class="card-icon">🎯</span>
+        <div class="card-content">
+          <h3>Recommended for You</h3>
+          <p id="jobsCardText">Loading job recommendations...</p>
+        </div>
+        <button class="card-btn">Browse Jobs →</button>
+      </div>
+      
+      <div class="action-card" onclick="window.location.href='/frontend/pages/job-seeker/messages.html'">
+        <span class="card-badge" id="messagesBadge" style="display: none;">0 New</span>
+        <span class="card-icon">💬</span>
+        <div class="card-content">
+          <h3>Messages</h3>
+          <p id="messagesCardText">Connect with recruiters and hiring managers.</p>
+        </div>
+        <button class="card-btn">Open Inbox →</button>
+      </div>
+      
+      <div class="action-card" onclick="window.location.href='/frontend/pages/job-seeker/profile.html'">
+        <span class="card-icon">📝</span>
+        <div class="card-content">
+          <h3>Complete Your Profile</h3>
+          <p id="profileCardText">Loading profile status...</p>
+        </div>
+        <button class="card-btn">Update Profile →</button>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="activity-section">
+      <h2><span class="icon">📈</span> Recent Activity</h2>
+      <div id="activityList">
+        <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+          <p>Loading your recent activity...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="quick-links">
+      <a href="/frontend/pages/job-seeker/messages.html" class="quick-link">
+        <span class="icon">💬</span>
+        <div class="label">Messages</div>
+      </a>
+      <a href="/frontend/pages/job-seeker/cv-upload.html" class="quick-link">
+        <span class="icon">📄</span>
+        <div class="label">Update CV</div>
+      </a>
+      <a href="/frontend/pages/job-seeker/interviews.html" class="quick-link">
+        <span class="icon">📅</span>
+        <div class="label">Interviews</div>
+      </a>
+      <a href="/frontend/pages/job-seeker/resources.html" class="quick-link">
+        <span class="icon">📚</span>
+        <div class="label">Resources</div>
+      </a>
+      <a href="/frontend/pages/job-seeker/jobs.html" class="quick-link" title="Browse companies hiring">
+        <span class="icon">🏢</span>
+        <div class="label">Companies</div>
+      </a>
+      <a href="/frontend/pages/job-seeker/settings.html" class="quick-link">
+        <span class="icon">⚙️</span>
+        <div class="label">Settings</div>
+      </a>
+    </div>
+  </main>
+  
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/cache.js"></script>
+  <script src="/frontend/public/js/common/error-handler.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script src="/frontend/public/js/common/chatbot.js"></script>
+  <script>
+    // Use the API base from api.js or default to /api (nginx proxy)
+    const API_BASE = window.HB?.api?.base || '/api';
+    console.log('📍 Using API base:', API_BASE);
+
+    // Cache manager to prevent rate limiting
+    const CacheManager = {
+      set(key, data, ttlMinutes = 5) {
+        const item = {
+          data: data,
+          timestamp: Date.now(),
+          ttl: ttlMinutes * 60 * 1000
+        };
+        try {
+          localStorage.setItem(`cache_${key}`, JSON.stringify(item));
+        } catch (e) {
+          console.warn('Cache storage failed:', e);
+        }
+      },
+      
+      get(key) {
+        try {
+          const item = localStorage.getItem(`cache_${key}`);
+          if (!item) return null;
+          
+          const parsed = JSON.parse(item);
+          const now = Date.now();
+          
+          // Check if cache is still valid
+          if (now - parsed.timestamp > parsed.ttl) {
+            localStorage.removeItem(`cache_${key}`);
+            return null;
+          }
+          
+          return parsed.data;
+        } catch (e) {
+          return null;
+        }
+      },
+      
+      clear(key) {
+        if (key) {
+          localStorage.removeItem(`cache_${key}`);
+        } else {
+          // Clear all cache items
+          Object.keys(localStorage).forEach(k => {
+            if (k.startsWith('cache_')) {
+              localStorage.removeItem(k);
+            }
+          });
+        }
+      }
+    };
+
+    // Fetch with cache wrapper
+    async function cachedFetch(url, options = {}, cacheKey = null, ttlMinutes = 5) {
+      // Generate cache key from URL if not provided
+      const key = cacheKey || `fetch_${url.replace(/[^a-zA-Z0-9]/g, '_')}`;
+      
+      // Check cache first
+      const cached = CacheManager.get(key);
+      if (cached) {
+        console.log(`✅ Using cached data for: ${url}`);
+        return { ok: true, json: async () => cached };
+      }
+      
+      // Make the actual request
+      try {
+        console.log(`🌐 Making API request to: ${url}`);
+        const response = await fetch(url, {
+          ...options,
+          credentials: 'include' // Include cookies for auth
+        });
+        console.log(`📥 API response status: ${response.status} for ${url}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`✅ API response data for ${url}:`, data);
+          // Cache the successful response
+          CacheManager.set(key, data, ttlMinutes);
+          return { ok: true, json: async () => data };
+        } else {
+          console.error(`❌ API error for ${url}:`, response.status, response.statusText);
+          try {
+            const errorData = await response.json();
+            console.error(`❌ Error details:`, errorData);
+          } catch (e) {
+            const errorText = await response.text();
+            console.error(`❌ Error body:`, errorText);
+          }
+        }
+        return response;
+      } catch (error) {
+        console.error(`❌ Network error for ${url}:`, error);
+        throw error;
+      }
+    }
+
+    // Helper function to get auth token with proper fallback
+    function getAuthToken() {
+      // Try HB.auth first
+      if (window.HB?.auth?.getToken) {
+        const token = window.HB.auth.getToken();
+        if (token) return token;
+      }
+      
+      // Fallback to direct localStorage access
+      return localStorage.getItem('hb_token') || localStorage.getItem('token');
+    }
+
+    // Helper function to decode JWT token
+    function decodeToken(token) {
+      try {
+        if (!token) return null;
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (error) {
+        console.error('❌ Error decoding token:', error);
+        return null;
+      }
+    }
+
+    // Load user name for welcome message
+    async function loadUserName() {
+      try {
+        const token = getAuthToken();
+        
+        console.log('🔍 Debug - Token check:', !!token);
+        console.log('🔍 Debug - LocalStorage keys:', Object.keys(localStorage));
+        
+        if (!token) {
+          console.log('❌ No token found - user not logged in');
+          document.getElementById('welcomeMessage').textContent = 'Welcome! Please log in to see your personalized dashboard 👋';
+          return;
+        }
+
+        const tokenData = decodeToken(token);
+        if (!tokenData || !tokenData.userId) {
+          console.log('❌ Invalid token data');
+          document.getElementById('welcomeMessage').textContent = 'Welcome! Please log in to see your personalized dashboard 👋';
+          return;
+        }
+
+        console.log('✅ Loading user profile for userId:', tokenData.userId);
+
+        const response = await cachedFetch(
+          `${API_BASE}/users/profile/${tokenData.userId}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          },
+          `user_profile_${tokenData.userId}`,
+          10 // Cache for 10 minutes
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('✅ User profile API Response:', data);
+          const user = data.user || data;
+          console.log('✅ User profile loaded:', user);
+          if (user.name) {
+            document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.name}! 👋`;
+            console.log('✅ Welcome message updated with name:', user.name);
+          } else {
+            console.log('⚠️ No name found in user data');
+            document.getElementById('welcomeMessage').textContent = 'Welcome back! 👋';
+          }
+        } else {
+          console.error('❌ Failed to load user profile, status:', response.status);
+          document.getElementById('welcomeMessage').textContent = 'Welcome back! 👋';
+        }
+      } catch (error) {
+        console.error('❌ Error loading user name:', error);
+        document.getElementById('welcomeMessage').textContent = 'Welcome back! 👋';
+      }
+    }
+
+    // Format time ago
+    function timeAgo(date) {
+      const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+      
+      const intervals = [
+        { label: 'year', seconds: 31536000 },
+        { label: 'month', seconds: 2592000 },
+        { label: 'week', seconds: 604800 },
+        { label: 'day', seconds: 86400 },
+        { label: 'hour', seconds: 3600 },
+        { label: 'minute', seconds: 60 }
+      ];
+      
+      for (const interval of intervals) {
+        const count = Math.floor(seconds / interval.seconds);
+        if (count >= 1) {
+          return count === 1 ? `1 ${interval.label} ago` : `${count} ${interval.label}s ago`;
+        }
+      }
+      return 'just now';
+    }
+
+    // Get activity icon and title based on status
+    function getActivityInfo(status) {
+      const statusMap = {
+        'submitted': { icon: '✅', title: 'Application Submitted', color: '#10b981' },
+        'review': { icon: '👁️', title: 'Application Under Review', color: '#3b82f6' },
+        'shortlisted': { icon: '⭐', title: 'You\'ve Been Shortlisted', color: '#f59e0b' },
+        'interview': { icon: '📅', title: 'Interview Scheduled', color: '#8b5cf6' },
+        'rejected': { icon: '❌', title: 'Application Not Selected', color: '#ef4444' },
+        'hired': { icon: '🎉', title: 'Congratulations! You\'re Hired', color: '#10b981' }
+      };
+      return statusMap[status] || { icon: '📄', title: 'Application Status Changed', color: '#6b7280' };
+    }
+
+    // Load recent activity from applications
+    async function loadRecentActivity() {
+      try {
+        const token = getAuthToken();
+        
+        if (!token) {
+          console.log('❌ No token found for activity');
+          document.getElementById('activityList').innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+              <p>Please log in to see your recent activity</p>
+            </div>
+          `;
+          return;
+        }
+
+        const tokenData = decodeToken(token);
+        if (!tokenData || !tokenData.userId) {
+          console.log('❌ Invalid token for activity');
+          document.getElementById('activityList').innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+              <p>Please log in to see your recent activity</p>
+            </div>
+          `;
+          return;
+        }
+
+        console.log('✅ Loading applications for userId:', tokenData.userId);
+
+        const response = await cachedFetch(
+          `${API_BASE}/applications/user/${tokenData.userId}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          },
+          `applications_${tokenData.userId}`,
+          3 // Cache for 3 minutes
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          const applications = data.applications || [];
+          
+          console.log(`✅ Loaded ${applications.length} applications`);
+          
+          if (applications.length === 0) {
+            document.getElementById('activityList').innerHTML = `
+              <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                <p>No recent activity yet. Start applying to jobs to see your activity here!</p>
+              </div>
+            `;
+            return;
+          }
+
+          // Sort by most recent and take top 5
+          const recentApps = applications
+            .sort((a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt))
+            .slice(0, 5);
+
+          // Fetch job details for each application
+          const activityPromises = recentApps.map(async (app) => {
+            try {
+              const jobResponse = await cachedFetch(
+                `${API_BASE}/jobs/${app.jobId}`,
+                {
+                  headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                  }
+                },
+                `job_${app.jobId}`,
+                10 // Cache for 10 minutes
+              );
+              
+              let jobTitle = 'Job Application';
+              let companyName = '';
+              
+              if (jobResponse.ok) {
+                const jobData = await jobResponse.json();
+                const job = jobData.job || jobData;
+                jobTitle = job.title || 'Job Application';
+                companyName = job.company || '';
+              }
+
+              const info = getActivityInfo(app.status);
+              const timestamp = app.updatedAt || app.createdAt;
+              
+              return `
+                <div class="activity-item">
+                  <div class="activity-icon" style="background: ${info.color}20; color: ${info.color}">${info.icon}</div>
+                  <div class="activity-content">
+                    <div class="activity-title">${info.title}</div>
+                    <div class="activity-desc">${jobTitle}${companyName ? ' at ' + companyName : ''}</div>
+                  </div>
+                  <div class="activity-time">${timeAgo(timestamp)}</div>
+                </div>
+              `;
+            } catch (error) {
+              console.error('❌ Error fetching job details:', error);
+              const info = getActivityInfo(app.status);
+              const timestamp = app.updatedAt || app.createdAt;
+              return `
+                <div class="activity-item">
+                  <div class="activity-icon" style="background: ${info.color}20; color: ${info.color}">${info.icon}</div>
+                  <div class="activity-content">
+                    <div class="activity-title">${info.title}</div>
+                    <div class="activity-desc">Job Application</div>
+                  </div>
+                  <div class="activity-time">${timeAgo(timestamp)}</div>
+                </div>
+              `;
+            }
+          });
+
+          const activityItems = await Promise.all(activityPromises);
+          document.getElementById('activityList').innerHTML = activityItems.join('');
+        } else {
+          console.error('❌ Failed to load applications, status:', response.status);
+          document.getElementById('activityList').innerHTML = `
+            <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+              <p>Unable to load activity. Please try again later.</p>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('❌ Error loading activity:', error);
+        document.getElementById('activityList').innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+            <p>Unable to load activity. Please try again later.</p>
+          </div>
+        `;
+      }
+    }
+
+    // Calculate profile strength based on filled fields
+    function calculateProfileStrength(user) {
+      const fields = {
+        name: user.name ? 10 : 0,
+        email: user.email ? 10 : 0,
+        phone: user.profile?.phone ? 10 : 0,
+        location: user.profile?.location ? 10 : 0,
+        bio: user.profile?.bio ? 15 : 0,
+        skills: (user.profile?.skills && user.profile.skills.length > 0) ? 15 : 0,
+        experience: (user.profile?.experience && user.profile.experience.length > 0) ? 15 : 0,
+        education: (user.profile?.education && user.profile.education.length > 0) ? 10 : 0,
+        avatar: user.profile?.avatar ? 10 : 0,
+        socialLinks: user.profile?.socialLinks ? 5 : 0
+      };
+      
+      return Object.values(fields).reduce((sum, val) => sum + val, 0);
+    }
+
+    // Load dashboard statistics
+    async function loadDashboardStats() {
+      try {
+        const token = getAuthToken();
+        
+        console.log('📊 Loading stats - Token available:', !!token);
+        
+        if (!token) {
+          console.log('❌ No token found for stats - setting default values');
+          document.getElementById('statApplications').textContent = '0';
+          document.getElementById('statApplicationsChange').textContent = 'Please log in';
+          document.getElementById('statMatches').textContent = '0';
+          document.getElementById('statMatchesChange').textContent = 'Please log in';
+          document.getElementById('statSaved').textContent = '0';
+          document.getElementById('statSavedChange').textContent = 'Please log in';
+          document.getElementById('statProfile').textContent = '0%';
+          document.getElementById('statProfileChange').textContent = 'Please log in';
+          return;
+        }
+
+        const tokenData = decodeToken(token);
+        if (!tokenData || !tokenData.userId) {
+          console.log('❌ Invalid token for stats');
+          return;
+        }
+
+        console.log('✅ Loading dashboard stats for userId:', tokenData.userId);
+
+        // Fetch applications
+        const appsResponse = await cachedFetch(
+          `${API_BASE}/applications/user/${tokenData.userId}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          },
+          `applications_${tokenData.userId}`,
+          3 // Cache for 3 minutes
+        );
+
+        if (appsResponse.ok) {
+          const appsData = await appsResponse.json();
+          const applications = appsData.applications || [];
+          
+          console.log(`✅ Loaded ${applications.length} total applications`);
+          
+          // Count active applications (not rejected or hired)
+          const activeApps = applications.filter(app => 
+            !['rejected', 'hired'].includes(app.status)
+          );
+          
+          document.getElementById('statApplications').textContent = activeApps.length;
+          console.log(`✅ Active applications: ${activeApps.length}`);
+          
+          // Calculate this week's applications
+          const oneWeekAgo = new Date();
+          oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+          const thisWeek = applications.filter(app => 
+            new Date(app.createdAt) > oneWeekAgo
+          ).length;
+          
+          if (thisWeek > 0) {
+            document.getElementById('statApplicationsChange').textContent = `↑ ${thisWeek} this week`;
+          } else {
+            document.getElementById('statApplicationsChange').textContent = 'No new applications';
+          }
+        } else {
+          console.error('❌ Failed to load applications for stats');
+          document.getElementById('statApplications').textContent = '0';
+          document.getElementById('statApplicationsChange').textContent = 'Error loading data';
+        }
+
+        // Fetch all jobs to find matches
+        const jobsResponse = await cachedFetch(
+          `${API_BASE}/jobs/`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          },
+          'all_jobs',
+          5 // Cache for 5 minutes
+        );
+
+        if (jobsResponse.ok) {
+          const jobsData = await jobsResponse.json();
+          const jobs = jobsData.jobs || [];
+          
+          console.log(`✅ Loaded ${jobs.length} total jobs`);
+          
+          // Filter jobs posted today
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          const todayJobs = jobs.filter(job => {
+            const jobDate = new Date(job.createdAt);
+            jobDate.setHours(0, 0, 0, 0);
+            return jobDate.getTime() === today.getTime();
+          });
+          
+          document.getElementById('statMatches').textContent = jobs.length;
+          document.getElementById('statMatchesChange').textContent = todayJobs.length > 0 
+            ? `↑ ${todayJobs.length} today` 
+            : 'No new jobs today';
+          
+          // Update action card
+          const jobsCardText = document.getElementById('jobsCardText');
+          if (jobs.length > 0) {
+            jobsCardText.textContent = `Based on your skills and preferences, we found ${jobs.length} matching jobs.`;
+          } else {
+            jobsCardText.textContent = 'No jobs available right now. Check back soon!';
+          }
+        } else {
+          console.error('❌ Failed to load jobs for stats');
+          document.getElementById('statMatches').textContent = '0';
+          document.getElementById('statMatchesChange').textContent = 'Error loading data';
+        }
+
+        // For now, saved jobs is 0 (we'll implement saved jobs feature later)
+        document.getElementById('statSaved').textContent = '0';
+        document.getElementById('statSavedChange').textContent = 'Start saving jobs';
+
+        // Fetch user profile for profile strength
+        const profileResponse = await cachedFetch(
+          `${API_BASE}/users/profile/${tokenData.userId}`,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          },
+          `user_profile_${tokenData.userId}`,
+          10 // Cache for 10 minutes
+        );
+
+        if (profileResponse.ok) {
+          const profileData = await profileResponse.json();
+          const user = profileData.user || profileData;
+          const strength = calculateProfileStrength(user);
+          
+          console.log(`✅ Profile strength: ${strength}%`);
+          
+          document.getElementById('statProfile').textContent = `${strength}%`;
+          
+          if (strength >= 80) {
+            document.getElementById('statProfileChange').textContent = '🎉 Excellent profile!';
+            document.getElementById('profileCardText').textContent = 'Your profile is looking great! Keep it updated with your latest achievements.';
+          } else if (strength >= 60) {
+            document.getElementById('statProfileChange').textContent = `${100 - strength}% to complete`;
+            document.getElementById('profileCardText').textContent = `Your profile is ${strength}% complete. Add more details to increase your chances.`;
+          } else {
+            document.getElementById('statProfileChange').textContent = 'Complete your profile';
+            document.getElementById('profileCardText').textContent = 'Complete your profile to get better job matches and stand out to employers.';
+          }
+        } else {
+          console.error('❌ Failed to load profile for stats');
+          document.getElementById('statProfile').textContent = '0%';
+          document.getElementById('statProfileChange').textContent = 'Error loading data';
+        }
+
+      } catch (error) {
+        console.error('❌ Error loading dashboard stats:', error);
+        document.getElementById('statApplications').textContent = '0';
+        document.getElementById('statApplicationsChange').textContent = 'Error';
+        document.getElementById('statMatches').textContent = '0';
+        document.getElementById('statMatchesChange').textContent = 'Error';
+      }
+    }
+
+    // Expose cache manager globally for other pages to use
+    window.HB = window.HB || {};
+    window.HB.cache = CacheManager;
+    window.HB.cachedFetch = cachedFetch;
+
+    // Initialize dashboard when DOM is ready
+    document.addEventListener('DOMContentLoaded', async () => {
+      console.log('🚀 Dashboard initializing...');
+      
+      // Check if user is logged in
+      const token = getAuthToken();
+      
+      console.log('🔍 Token check:', !!token);
+      if (token) {
+        console.log('🔍 Token preview:', token.substring(0, 20) + '...');
+      }
+      console.log('🔍 All localStorage items:', Object.keys(localStorage));
+      
+      if (!token) {
+        console.warn('⚠️ No authentication token found. User needs to login first.');
+        // Set default "please login" messages
+        document.getElementById('welcomeMessage').textContent = 'Welcome! Please log in to see your dashboard 👋';
+        document.getElementById('statApplicationsChange').textContent = 'Login to view';
+        document.getElementById('statMatchesChange').textContent = 'Login to view';
+        document.getElementById('statSavedChange').textContent = 'Login to view';
+        document.getElementById('statProfileChange').textContent = 'Login to view';
+        document.getElementById('activityList').innerHTML = `
+          <div style="text-align: center; padding: 40px;">
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">Please log in to see your activity</p>
+            <button class="card-btn" onclick="window.location.href='/frontend/public/login.html'">Go to Login →</button>
+          </div>
+        `;
+        return;
+      }
+      
+      console.log('✅ Token found, loading dashboard data...');
+      
+      // Load all dashboard data
+      try {
+        await Promise.all([
+          loadUserName(),
+          loadRecentActivity(),
+          loadDashboardStats()
+        ]);
+        console.log('✅ Dashboard data loaded successfully');
+      } catch (error) {
+        console.error('❌ Error loading dashboard:', error);
+      }
+    });
+  </script>
+</body>
+</html>

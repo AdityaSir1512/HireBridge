@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Settings • Candidate</title>
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/job-seeker.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/notifications.css">
+  <style>
+    .page-container{max-width:1000px;margin:0 auto;padding:32px 24px}
+    .page-header{margin-bottom:32px}
+    .page-header h1{font-size:32px;font-weight:800;margin:0 0 8px 0;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .page-header .subtitle{color:var(--text-secondary);font-size:15px}
+    .settings-card{background:var(--surface-color);border-radius:20px;padding:32px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);margin-bottom:24px}
+    .settings-section{padding:24px 0;border-bottom:1px solid var(--border-color)}
+    .settings-section:first-child{padding-top:0}
+    .settings-section:last-child{border-bottom:none;padding-bottom:0}
+    .section-header{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+    .section-icon{font-size:28px}
+    .section-info h3{font-size:18px;font-weight:700;margin:0 0 4px 0;color:var(--text-color)}
+    .section-info p{font-size:14px;color:var(--text-secondary);margin:0}
+    .setting-item{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--background-color);border-radius:12px;margin-bottom:12px}
+    .setting-item:last-child{margin-bottom:0}
+    .setting-label{display:flex;flex-direction:column;gap:4px}
+    .setting-label .title{font-size:15px;font-weight:600;color:var(--text-color)}
+    .setting-label .description{font-size:13px;color:var(--text-secondary)}
+    .toggle-switch{position:relative;width:52px;height:28px;background:var(--border-color);border-radius:14px;cursor:pointer;transition:all 0.3s ease}
+    .toggle-switch.active{background:var(--primary-color)}
+    .toggle-switch .slider{position:absolute;width:22px;height:22px;background:#fff;border-radius:50%;top:3px;left:3px;transition:all 0.3s ease;box-shadow:0 2px 4px rgba(0,0,0,0.2)}
+    .toggle-switch.active .slider{left:27px}
+    .form-select{padding:10px 14px;border-radius:10px;border:2px solid var(--border-color);background:var(--background-color);color:var(--text-color);font-size:14px;transition:all 0.3s ease;font-family:inherit;min-width:200px}
+    .form-select:focus{outline:none;border-color:var(--primary-color);box-shadow:0 0 0 4px rgba(139,92,246,0.1)}
+    .theme-preview{display:flex;gap:12px;margin-top:16px}
+    .theme-option{padding:12px 20px;border-radius:10px;border:2px solid var(--border-color);background:var(--background-color);cursor:pointer;transition:all 0.3s ease;font-size:14px;font-weight:600}
+    .theme-option:hover{border-color:var(--primary-color);transform:translateY(-2px)}
+    .theme-option.active{background:var(--primary-color);color:#fff;border-color:var(--primary-color)}
+    .danger-zone{background:linear-gradient(135deg,#fee2e2,#fecaca);padding:24px;border-radius:12px;border:2px solid #fca5a5}
+    .danger-zone h4{color:#991b1b;font-size:16px;font-weight:700;margin:0 0 8px 0}
+    .danger-zone p{color:#7f1d1d;font-size:14px;margin:0 0 16px 0}
+    .btn-danger{padding:12px 24px;border-radius:10px;border:none;background:#dc2626;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.3s ease}
+    .btn-danger:hover{background:#b91c1c;transform:translateY(-2px)}
+    .save-section{padding-top:24px;margin-top:24px;border-top:1px solid var(--border-color);display:flex;justify-content:flex-end;gap:12px}
+    .btn-save{padding:14px 32px;border-radius:12px;border:none;background:var(--accent-gradient);color:#fff;font-size:16px;font-weight:700;cursor:pointer;transition:all 0.3s ease;box-shadow:0 4px 20px rgba(139,92,246,0.3)}
+    .btn-save:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(139,92,246,0.4)}
+    .success-message{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46;padding:16px;border-radius:12px;margin-bottom:20px;display:none;font-weight:600;text-align:center}
+  </style>
+</head>
+<body>
+  <header class="nav-job-seeker">
+    <a href="/frontend/pages/job-seeker/dashboard.html" class="nav-brand" title="Go to Dashboard">
+      <img src="/frontend/public/assets/images/hirebridge-logo-full.svg" alt="HireBridge Logo">
+      <span class="nav-brand-text">HireBridge • Candidate</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="/frontend/pages/job-seeker/dashboard.html">Dashboard</a>
+      <a href="/frontend/pages/job-seeker/jobs.html">Jobs</a>
+      <a href="/frontend/pages/job-seeker/applications.html">Applications</a>
+      <a href="/frontend/pages/job-seeker/saved.html">Saved</a>
+      <a href="/frontend/pages/job-seeker/profile.html">Profile</a>
+      <a href="/frontend/pages/job-seeker/settings.html" style="background:var(--background-color)">Settings</a>
+      <button class="btn-messages" onclick="window.location.href='/frontend/pages/job-seeker/messages.html'" title="Messages" aria-label="Messages">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z"/>
+          <path d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0015.75 7.5z"/>
+        </svg>
+        <span>Messages</span>
+        <span class="message-badge" id="messageBadge" style="display: none;">0</span>
+      </button>
+      <button class="btn notification-bell" onclick="HB.showNotifications()" title="Notifications">
+        <span>🔔</span>
+        <span class="notification-badge">3</span>
+      </button>
+      <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="btn-logout" onclick="HB.logout()" title="Logout" aria-label="Logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <div class="page-header">
+      <h1>Settings ⚙️</h1>
+      <p class="subtitle">Manage your preferences and account settings</p>
+    </div>
+
+    <div id="successMsg" class="success-message">✅ Settings saved successfully!</div>
+
+    <div class="settings-card">
+      <!-- Job Preferences -->
+      <div class="settings-section">
+        <div class="section-header">
+          <span class="section-icon">💼</span>
+          <div class="section-info">
+            <h3>Job Preferences</h3>
+            <p>Set your job search preferences</p>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">Preferred Job Type</span>
+            <span class="description">Choose your preferred work arrangement</span>
+          </div>
+          <select class="form-select" id="preferredJobType">
+            <option value="full_time">Full-time</option>
+            <option value="freelancing">Freelancer</option>
+            <option value="internship">Internship</option>
+            <option value="any">Any Type</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">Work Mode Preference</span>
+            <span class="description">Remote, on-site, or hybrid</span>
+          </div>
+          <select class="form-select" id="workMode">
+            <option value="remote">Remote Only</option>
+            <option value="onsite">On-site Only</option>
+            <option value="hybrid">Hybrid</option>
+            <option value="any">Flexible</option>
+          </select>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">Job Alerts</span>
+            <span class="description">Get notified about new matching jobs</span>
+          </div>
+          <div class="toggle-switch active" data-setting="jobAlerts" onclick="this.classList.toggle('active')">
+            <div class="slider"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notification Preferences -->
+      <div class="settings-section">
+        <div class="section-header">
+          <span class="section-icon">🔔</span>
+          <div class="section-info">
+            <h3>Notification Preferences</h3>
+            <p>Choose what notifications you want to receive</p>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">Email Notifications</span>
+            <span class="description">Receive updates via email</span>
+          </div>
+          <div class="toggle-switch active" data-setting="emailNotifications" onclick="this.classList.toggle('active')">
+            <div class="slider"></div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">Application Updates</span>
+            <span class="description">Get notified about application status changes</span>
+          </div>
+          <div class="toggle-switch active" data-setting="applicationUpdates" onclick="this.classList.toggle('active')">
+            <div class="slider"></div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">New Messages</span>
+            <span class="description">Get notified about messages from employers</span>
+          </div>
+          <div class="toggle-switch active" data-setting="newMessages" onclick="this.classList.toggle('active')">
+            <div class="slider"></div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">Interview Reminders</span>
+            <span class="description">Receive reminders before scheduled interviews</span>
+          </div>
+          <div class="toggle-switch active" data-setting="interviewReminders" onclick="this.classList.toggle('active')">
+            <div class="slider"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appearance -->
+      <div class="settings-section">
+        <div class="section-header">
+          <span class="section-icon">🎨</span>
+          <div class="section-info">
+            <h3>Appearance</h3>
+            <p>Customize how HireBridge looks</p>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">Theme</span>
+            <span class="description">Choose your preferred color scheme</span>
+          </div>
+          <div class="theme-preview">
+            <button class="theme-option" data-theme="light" onclick="selectTheme(this, 'light')">☀️ Light</button>
+            <button class="theme-option" data-theme="dark" onclick="selectTheme(this, 'dark')">🌙 Dark</button>
+            <button class="theme-option active" data-theme="auto" onclick="selectTheme(this, 'auto')">🔄 Auto</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Privacy & Security -->
+      <div class="settings-section">
+        <div class="section-header">
+          <span class="section-icon">🔒</span>
+          <div class="section-info">
+            <h3>Privacy & Security</h3>
+            <p>Control your privacy and security settings</p>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">Profile Visibility</span>
+            <span class="description">Make your profile visible to employers</span>
+          </div>
+          <div class="toggle-switch active" data-setting="profileVisibility" onclick="this.classList.toggle('active')">
+            <div class="slider"></div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">Two-Factor Authentication</span>
+            <span class="description">Add an extra layer of security</span>
+          </div>
+          <div class="toggle-switch" data-setting="twoFactorAuth" onclick="this.classList.toggle('active')">
+            <div class="slider"></div>
+          </div>
+        </div>
+        <div class="setting-item">
+          <div class="setting-label">
+            <span class="title">Allow Recruiter Messages</span>
+            <span class="description">Let recruiters contact you directly</span>
+          </div>
+          <div class="toggle-switch active" data-setting="allowRecruiterMessages" onclick="this.classList.toggle('active')">
+            <div class="slider"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div class="settings-section">
+        <div class="section-header">
+          <span class="section-icon">⚠️</span>
+          <div class="section-info">
+            <h3>Danger Zone</h3>
+            <p>Irreversible actions</p>
+          </div>
+        </div>
+        <div class="danger-zone">
+          <h4>Delete Account</h4>
+          <p>Once you delete your account, there is no going back. All your applications, saved jobs, and profile data will be permanently removed.</p>
+          <button class="btn-danger" onclick="deleteAccount()">Delete My Account</button>
+        </div>
+      </div>
+
+      <!-- Save Button -->
+      <div class="save-section">
+        <button class="btn-save" onclick="saveSettings()">Save All Settings</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script>
+    let currentUserId = null;
+
+    // Helper function to decode JWT token
+    function decodeToken(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+      }
+    }
+
+    // Get toggle state
+    function getToggleState(toggleElement) {
+      return toggleElement.classList.contains('active');
+    }
+
+    // Set toggle state
+    function setToggleState(toggleElement, isActive) {
+      if (isActive) {
+        toggleElement.classList.add('active');
+      } else {
+        toggleElement.classList.remove('active');
+      }
+    }
+
+    // Load user settings
+    async function loadSettings() {
+      try {
+        const token = HB?.auth?.getToken?.();
+        if (!token) {
+          window.location.href = '/frontend/public/login.html';
+          return;
+        }
+
+        const tokenData = decodeToken(token);
+        if (!tokenData || !tokenData.userId) return;
+        currentUserId = tokenData.userId;
+
+        const response = await fetch(`http://localhost:3000/api/users/profile/${currentUserId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const user = data.user || data;
+          const settings = user.settings || {};
+
+          // Load job preferences
+          if (settings.jobPreferences) {
+            const preferredJobType = document.getElementById('preferredJobType');
+            if (preferredJobType && settings.jobPreferences.preferredJobType) {
+              preferredJobType.value = settings.jobPreferences.preferredJobType;
+            }
+
+            const workMode = document.getElementById('workMode');
+            if (workMode && settings.jobPreferences.workMode) {
+              workMode.value = settings.jobPreferences.workMode;
+            }
+
+            const jobAlertsToggle = document.querySelector('[data-setting="jobAlerts"]');
+            if (jobAlertsToggle) {
+              setToggleState(jobAlertsToggle, settings.jobPreferences.jobAlerts !== false);
+            }
+          }
+
+          // Load notification preferences
+          if (settings.notifications) {
+            const emailToggle = document.querySelector('[data-setting="emailNotifications"]');
+            if (emailToggle) {
+              setToggleState(emailToggle, settings.notifications.emailNotifications !== false);
+            }
+
+            const applicationToggle = document.querySelector('[data-setting="applicationUpdates"]');
+            if (applicationToggle) {
+              setToggleState(applicationToggle, settings.notifications.applicationUpdates !== false);
+            }
+
+            const messagesToggle = document.querySelector('[data-setting="newMessages"]');
+            if (messagesToggle) {
+              setToggleState(messagesToggle, settings.notifications.newMessages !== false);
+            }
+
+            const interviewToggle = document.querySelector('[data-setting="interviewReminders"]');
+            if (interviewToggle) {
+              setToggleState(interviewToggle, settings.notifications.interviewReminders !== false);
+            }
+          }
+
+          // Load privacy settings
+          if (settings.privacy) {
+            const visibilityToggle = document.querySelector('[data-setting="profileVisibility"]');
+            if (visibilityToggle) {
+              setToggleState(visibilityToggle, settings.privacy.profileVisibility !== false);
+            }
+
+            const twoFactorToggle = document.querySelector('[data-setting="twoFactorAuth"]');
+            if (twoFactorToggle) {
+              setToggleState(twoFactorToggle, settings.privacy.twoFactorAuth === true);
+            }
+
+            const recruiterToggle = document.querySelector('[data-setting="allowRecruiterMessages"]');
+            if (recruiterToggle) {
+              setToggleState(recruiterToggle, settings.privacy.allowRecruiterMessages !== false);
+            }
+          }
+
+          // Load appearance settings
+          if (settings.appearance && settings.appearance.theme) {
+            const themeButtons = document.querySelectorAll('.theme-option');
+            themeButtons.forEach(btn => {
+              btn.classList.remove('active');
+              if (btn.getAttribute('data-theme') === settings.appearance.theme) {
+                btn.classList.add('active');
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    }
+
+    function selectTheme(btn, theme) {
+      document.querySelectorAll('.theme-option').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (theme !== 'auto') {
+        document.documentElement.setAttribute('data-theme', theme);
+      }
+    }
+
+    async function saveSettings() {
+      try {
+        const token = HB?.auth?.getToken?.();
+        if (!token || !currentUserId) {
+          window.location.href = '/frontend/public/login.html';
+          return;
+        }
+
+        // Collect all settings
+        const settings = {
+          jobPreferences: {
+            preferredJobType: document.getElementById('preferredJobType').value,
+            workMode: document.getElementById('workMode').value,
+            jobAlerts: getToggleState(document.querySelector('[data-setting="jobAlerts"]'))
+          },
+          notifications: {
+            emailNotifications: getToggleState(document.querySelector('[data-setting="emailNotifications"]')),
+            applicationUpdates: getToggleState(document.querySelector('[data-setting="applicationUpdates"]')),
+            newMessages: getToggleState(document.querySelector('[data-setting="newMessages"]')),
+            interviewReminders: getToggleState(document.querySelector('[data-setting="interviewReminders"]'))
+          },
+          privacy: {
+            profileVisibility: getToggleState(document.querySelector('[data-setting="profileVisibility"]')),
+            twoFactorAuth: getToggleState(document.querySelector('[data-setting="twoFactorAuth"]')),
+            allowRecruiterMessages: getToggleState(document.querySelector('[data-setting="allowRecruiterMessages"]'))
+          },
+          appearance: {
+            theme: document.querySelector('.theme-option.active')?.getAttribute('data-theme') || 'auto'
+          }
+        };
+
+        const response = await fetch(`http://localhost:3000/api/users/profile/${currentUserId}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ settings })
+        });
+
+        if (response.ok) {
+          const successMsg = document.getElementById('successMsg');
+          successMsg.style.display = 'block';
+          window.scrollTo(0, 0);
+          setTimeout(() => {
+            successMsg.style.display = 'none';
+          }, 3000);
+        } else {
+          const errorData = await response.json();
+          alert('Failed to save settings: ' + (errorData.message || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Error saving settings:', error);
+        alert('Failed to save settings. Please try again.');
+      }
+    }
+
+    // Delete account function
+    async function deleteAccount() {
+      const confirmDelete = confirm('⚠️ Are you absolutely sure you want to delete your account?\n\nThis action cannot be undone. All your data will be permanently removed.');
+      
+      if (!confirmDelete) return;
+
+      // Ask for password confirmation
+      const password = prompt('Please enter your password to confirm account deletion:');
+      
+      if (!password) {
+        alert('Account deletion cancelled.');
+        return;
+      }
+
+      try {
+        const token = HB?.auth?.getToken?.();
+        
+        if (!token || !currentUserId) {
+          alert('❌ Please login to delete your account');
+          return;
+        }
+
+        const response = await fetch(`http://localhost:3000/api/users/${currentUserId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          alert('✅ ' + data.message);
+          // Logout and redirect to home
+          if (HB?.auth?.clearToken) {
+            HB.auth.clearToken();
+          } else {
+            localStorage.clear();
+            sessionStorage.clear();
+          }
+          window.location.href = '/frontend/public/index.html';
+        } else {
+          alert('❌ ' + (data.message || 'Failed to delete account'));
+        }
+      } catch (error) {
+        console.error('Delete account error:', error);
+        alert('❌ An error occurred while deleting your account. Please try again.');
+      }
+    }
+
+    // Load settings on page load
+    document.addEventListener('DOMContentLoaded', loadSettings);
+  </script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/chatbot.js"></script>
+</body>
+</html>

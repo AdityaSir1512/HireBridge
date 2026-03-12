@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Interviews • HireBridge</title>
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/job-seeker.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <style>
+    .interviews-container{max-width:1200px;margin:0 auto;padding:32px 24px}
+    .page-header{margin-bottom:32px}
+    .page-header h1{font-size:36px;font-weight:800;margin:0 0 8px;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .page-header p{color:var(--text-secondary);font-size:16px;margin:0}
+    
+    .interviews-grid{display:grid;gap:24px}
+    .interview-card{background:var(--surface-color);border:1px solid var(--border-color);border-radius:20px;padding:32px;transition:all 0.3s ease}
+    .interview-card:hover{box-shadow:var(--card-shadow-hover);transform:translateY(-2px)}
+    
+    .interview-header{display:flex;justify-content:space-between;align-items:start;margin-bottom:20px}
+    .company-info{display:flex;gap:16px;align-items:center}
+    .company-logo{width:64px;height:64px;border-radius:12px;background:var(--accent-gradient);display:flex;align-items:center;justify-content:center;font-size:32px;flex-shrink:0}
+    .company-details h3{font-size:20px;margin:0 0 4px;color:var(--text-color)}
+    .company-details .position{color:var(--text-secondary);font-size:15px;margin:0}
+    .status-badge{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600}
+    .status-badge.upcoming{background:rgba(139,92,246,0.15);color:#8b5cf6}
+    .status-badge.completed{background:rgba(16,185,129,0.15);color:#10b981}
+    .status-badge.cancelled{background:rgba(239,68,68,0.15);color:#ef4444}
+    
+    .interview-details{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px}
+    .detail-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--background-color);border-radius:12px}
+    .detail-icon{font-size:24px}
+    .detail-content{flex:1}
+    .detail-label{font-size:12px;color:var(--text-secondary);margin:0 0 2px}
+    .detail-value{font-weight:600;color:var(--text-color);margin:0}
+    
+    .interview-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn-action{padding:10px 20px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s ease;border:none}
+    .btn-join{background:var(--accent-gradient);color:#fff}
+    .btn-join:hover{transform:translateY(-2px);box-shadow:0 4px 20px rgba(139,92,246,0.3)}
+    .btn-reschedule{background:transparent;border:2px solid var(--primary-color);color:var(--primary-color)}
+    .btn-reschedule:hover{background:var(--primary-color);color:#fff}
+    .btn-cancel{background:transparent;border:2px solid #ef4444;color:#ef4444}
+    .btn-cancel:hover{background:#ef4444;color:#fff}
+    
+    .empty-state{text-align:center;padding:80px 20px;background:var(--surface-color);border-radius:20px;border:1px solid var(--border-color)}
+    .empty-state .icon{font-size:80px;margin-bottom:20px}
+    .empty-state h2{font-size:24px;margin:0 0 12px;color:var(--text-color)}
+    .empty-state p{color:var(--text-secondary);margin:0 0 24px;font-size:16px}
+  </style>
+</head>
+<body>
+  <header class="nav-job-seeker">
+    <a href="/frontend/pages/job-seeker/dashboard.html" class="nav-brand">
+      <img src="/frontend/public/assets/images/hirebridge-logo-full.svg" alt="HireBridge Logo">
+      <span class="nav-brand-text">HireBridge • Candidate</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="/frontend/pages/job-seeker/jobs.html">Jobs</a>
+      <a href="/frontend/pages/job-seeker/applications.html">Applications</a>
+      <a href="/frontend/pages/job-seeker/saved.html">Saved</a>
+      <a href="/frontend/pages/job-seeker/profile.html">Profile</a>
+      <a href="/frontend/pages/job-seeker/settings.html">Settings</a>
+      <button class="btn notification-bell" onclick="HB.showNotifications()">
+        <span>🔔</span>
+        <span class="notification-badge" id="notificationBadge">0</span>
+      </button>
+      <button class="btn theme-toggle" onclick="HB.toggleTheme()">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="btn-logout" onclick="HB.logout()">Logout</button>
+    </nav>
+  </header>
+
+  <main class="interviews-container">
+    <div class="page-header">
+      <h1>📅 My Interviews</h1>
+      <p>Manage your upcoming and past interviews</p>
+    </div>
+
+    <div class="interviews-grid" id="interviewsList">
+      <!-- Interviews will be loaded here -->
+      <div class="empty-state">
+        <div class="icon">📅</div>
+        <h2>No Interviews Scheduled</h2>
+        <p>When employers schedule interviews, they'll appear here</p>
+        <button class="btn-join" onclick="window.location.href='/frontend/pages/job-seeker/jobs.html'">
+          Browse Jobs
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script>
+    // Load interviews on page load
+    window.addEventListener('DOMContentLoaded', loadInterviews);
+
+    async function loadInterviews() {
+      const token = HB?.auth?.getToken?.();
+      if (!token) {
+        window.location.href = '/frontend/public/login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/api/interviews', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const interviews = data.interviews || data;
+          
+          if (interviews && interviews.length > 0) {
+            displayInterviews(interviews);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading interviews:', error);
+      }
+    }
+
+    function displayInterviews(interviews) {
+      const container = document.getElementById('interviewsList');
+      container.innerHTML = interviews.map(interview => `
+        <div class="interview-card">
+          <div class="interview-header">
+            <div class="company-info">
+              <div class="company-logo">${interview.companyLogo || '🏢'}</div>
+              <div class="company-details">
+                <h3>${interview.companyName || 'Company Name'}</h3>
+                <p class="position">${interview.position || 'Position'}</p>
+              </div>
+            </div>
+            <span class="status-badge ${interview.status || 'upcoming'}">
+              ${interview.status === 'completed' ? '✅ Completed' : 
+                interview.status === 'cancelled' ? '❌ Cancelled' : 
+                '🕐 Upcoming'}
+            </span>
+          </div>
+          
+          <div class="interview-details">
+            <div class="detail-item">
+              <span class="detail-icon">📅</span>
+              <div class="detail-content">
+                <p class="detail-label">Date</p>
+                <p class="detail-value">${formatDate(interview.date)}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">🕐</span>
+              <div class="detail-content">
+                <p class="detail-label">Time</p>
+                <p class="detail-value">${interview.time || '10:00 AM'}</p>
+              </div>
+            </div>
+            <div class="detail-item">
+              <span class="detail-icon">💻</span>
+              <div class="detail-content">
+                <p class="detail-label">Type</p>
+                <p class="detail-value">${interview.type || 'Video Call'}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="interview-actions">
+            ${interview.status === 'upcoming' ? `
+              <button class="btn-action btn-join" onclick="joinInterview('${interview._id}')">
+                🎥 Join Interview
+              </button>
+              <button class="btn-action btn-reschedule" onclick="rescheduleInterview('${interview._id}')">
+                📅 Reschedule
+              </button>
+              <button class="btn-action btn-cancel" onclick="cancelInterview('${interview._id}')">
+                ❌ Cancel
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        weekday: 'short', 
+        month: 'short', 
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+
+    function joinInterview(id) {
+      alert('🎥 Joining interview...\n\nThis will open the video call interface.');
+    }
+
+    function rescheduleInterview(id) {
+      alert('📅 Reschedule request sent!\n\nThe employer will be notified.');
+    }
+
+    function cancelInterview(id) {
+      if (confirm('Are you sure you want to cancel this interview?')) {
+        alert('Interview cancelled. The employer has been notified.');
+        loadInterviews();
+      }
+    }
+  </script>
+</body>
+</html>

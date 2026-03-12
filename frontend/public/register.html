@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign Up • HireBridge</title>
+  <link rel="icon" type="image/svg+xml" href="/frontend/public/assets/images/hirebridge-logo-full.svg">
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <style>
+    .auth-container {
+      min-height: calc(100vh - 120px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+    .auth-card {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 48px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(139, 92, 246, 0.1);
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .auth-header h1 {
+      font-size: 32px;
+      margin: 0 0 8px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .auth-header p {
+      color: var(--text-secondary);
+      margin: 0;
+      font-size: 15px;
+    }
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .form-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    .form-input {
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 2px solid var(--border-color);
+      background: var(--background-color);
+      color: var(--text-color);
+      font-size: 15px;
+      transition: all 0.3s ease;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+    }
+    .role-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .role-option {
+      padding: 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--background-color);
+    }
+    .role-option:hover {
+      border-color: var(--primary-color);
+      background: var(--surface-color);
+    }
+    .role-option.selected {
+      border-color: var(--primary-color);
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(20, 184, 166, 0.1));
+    }
+    .role-option input {
+      display: none;
+    }
+    .role-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .role-title {
+      font-weight: 600;
+      color: var(--text-color);
+      font-size: 15px;
+    }
+    .job-type-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .job-pill {
+      padding: 10px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--background-color);
+      color: var(--text-color);
+    }
+    .job-pill:hover {
+      border-color: var(--primary-color);
+      background: var(--surface-color);
+    }
+    .job-pill.selected {
+      border-color: var(--primary-color);
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(20, 184, 166, 0.15));
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+    .job-pill input {
+      display: none;
+    }
+    .submit-btn {
+      padding: 16px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 8px;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+    }
+    .auth-footer {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+    }
+    .auth-footer p {
+      color: var(--text-secondary);
+      margin: 0;
+      font-size: 14px;
+    }
+    .auth-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+    .err {
+      color: #ef4444;
+      font-size: 14px;
+      text-align: center;
+      padding: 12px;
+      background: rgba(239, 68, 68, 0.1);
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="/frontend/public/index.html" class="brand" style="text-decoration: none; cursor: pointer;">
+        <span class="logo"></span>
+        <span>HireBridge</span>
+      </a>
+      <nav class="primary-nav">
+        <a href="/frontend/public/login.html" class="btn">Login</a>
+        <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme" aria-label="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+  
+  <main class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h1>Join HireBridge</h1>
+        <p>Create your account and start your journey</p>
+      </div>
+      
+      <form id="registerForm" class="auth-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input class="form-input" required type="text" name="name" placeholder="John Doe">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" required type="email" name="email" placeholder="you@example.com">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" required type="password" name="password" placeholder="Create a strong password">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">I am a...</label>
+          <div class="role-selector">
+            <label class="role-option selected" id="seekerOption">
+              <input type="radio" name="role" value="seeker" checked>
+              <div class="role-icon">🎯</div>
+              <div class="role-title">Candidate</div>
+            </label>
+            <label class="role-option" id="employerOption">
+              <input type="radio" name="role" value="employer">
+              <div class="role-icon">💼</div>
+              <div class="role-title">Employer</div>
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-group" id="jobTypeGroup" style="display: block;">
+          <label class="form-label">Preferred Job Type</label>
+          <div class="job-type-pills">
+            <label class="job-pill selected" id="freelancerPill">
+              <input type="radio" name="jobType" value="freelancer" checked>
+              Freelancer
+            </label>
+            <label class="job-pill" id="fullTimePill">
+              <input type="radio" name="jobType" value="full_time">
+              Full-time
+            </label>
+            <label class="job-pill" id="internshipPill">
+              <input type="radio" name="jobType" value="internship">
+              Internship
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-group" id="employerTypeGroup" style="display: none;">
+          <label class="form-label">Employer Type</label>
+          <div class="job-type-pills">
+            <label class="job-pill selected" id="personalPill">
+              <input type="radio" name="employerType" value="personal" checked>
+              Individual
+            </label>
+            <label class="job-pill" id="companyPill">
+              <input type="radio" name="employerType" value="company">
+              Company
+            </label>
+          </div>
+        </div>
+        
+        <button class="submit-btn" type="submit">Create Account</button>
+        
+        <div id="error" class="err" style="display: none;"></div>
+      </form>
+      
+      <div class="auth-footer">
+        <p>Already have an account? <a href="/frontend/public/login.html">Sign in</a></p>
+      </div>
+    </div>
+  </main>
+  
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script>
+    // Role selection toggle
+    const seekerOption = document.getElementById('seekerOption');
+    const employerOption = document.getElementById('employerOption');
+    const roleInputs = document.querySelectorAll('input[name="role"]');
+    const jobTypeGroup = document.getElementById('jobTypeGroup');
+    const employerTypeGroup = document.getElementById('employerTypeGroup');
+    
+    roleInputs.forEach(input => {
+      input.addEventListener('change', (e) => {
+        if(e.target.value === 'seeker') {
+          seekerOption.classList.add('selected');
+          employerOption.classList.remove('selected');
+          jobTypeGroup.style.display = 'block';
+          employerTypeGroup.style.display = 'none';
+        } else {
+          employerOption.classList.add('selected');
+          seekerOption.classList.remove('selected');
+          jobTypeGroup.style.display = 'none';
+          employerTypeGroup.style.display = 'block';
+        }
+      });
+    });
+    
+    seekerOption.addEventListener('click', () => {
+      document.querySelector('input[value="seeker"]').checked = true;
+      seekerOption.classList.add('selected');
+      employerOption.classList.remove('selected');
+      jobTypeGroup.style.display = 'block';
+      employerTypeGroup.style.display = 'none';
+    });
+    
+    employerOption.addEventListener('click', () => {
+      document.querySelector('input[value="employer"]').checked = true;
+      employerOption.classList.add('selected');
+      seekerOption.classList.remove('selected');
+      jobTypeGroup.style.display = 'none';
+      employerTypeGroup.style.display = 'block';
+    });
+
+    // Job type pills selection
+    const freelancerPill = document.getElementById('freelancerPill');
+    const fullTimePill = document.getElementById('fullTimePill');
+    const internshipPill = document.getElementById('internshipPill');
+    const jobTypeInputs = document.querySelectorAll('input[name="jobType"]');
+    
+    jobTypeInputs.forEach(input => {
+      input.addEventListener('change', (e) => {
+        [freelancerPill, fullTimePill, internshipPill].forEach(pill => pill.classList.remove('selected'));
+        if(e.target.value === 'freelancer') freelancerPill.classList.add('selected');
+        if(e.target.value === 'full_time') fullTimePill.classList.add('selected');
+        if(e.target.value === 'internship') internshipPill.classList.add('selected');
+      });
+    });
+    
+    freelancerPill.addEventListener('click', () => {
+      document.querySelector('input[value="freelancer"]').checked = true;
+      [fullTimePill, internshipPill].forEach(pill => pill.classList.remove('selected'));
+      freelancerPill.classList.add('selected');
+    });
+    
+    fullTimePill.addEventListener('click', () => {
+      document.querySelector('input[value="full_time"]').checked = true;
+      [freelancerPill, internshipPill].forEach(pill => pill.classList.remove('selected'));
+      fullTimePill.classList.add('selected');
+    });
+    
+    internshipPill.addEventListener('click', () => {
+      document.querySelector('input[value="internship"]').checked = true;
+      [freelancerPill, fullTimePill].forEach(pill => pill.classList.remove('selected'));
+      internshipPill.classList.add('selected');
+    });
+
+    // Employer type pills selection
+    const personalPill = document.getElementById('personalPill');
+    const companyPill = document.getElementById('companyPill');
+    const employerTypeInputs = document.querySelectorAll('input[name="employerType"]');
+    
+    employerTypeInputs.forEach(input => {
+      input.addEventListener('change', (e) => {
+        [personalPill, companyPill].forEach(pill => pill.classList.remove('selected'));
+        if(e.target.value === 'personal') personalPill.classList.add('selected');
+        if(e.target.value === 'company') companyPill.classList.add('selected');
+      });
+    });
+    
+    personalPill.addEventListener('click', () => {
+      document.querySelector('input[value="personal"]').checked = true;
+      companyPill.classList.remove('selected');
+      personalPill.classList.add('selected');
+    });
+    
+    companyPill.addEventListener('click', () => {
+      document.querySelector('input[value="company"]').checked = true;
+      personalPill.classList.remove('selected');
+      companyPill.classList.add('selected');
+    });
+
+    // Form submission
+    document.getElementById('registerForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const form = new FormData(e.currentTarget);
+      const userType = form.get('role') === 'employer' ? 'employer' : 'job_seeker';
+      const jobType = form.get('jobType') || 'freelancer';
+      const employerType = form.get('employerType') || 'personal';
+      const errorBox = document.getElementById('error');
+      errorBox.textContent = '';
+      errorBox.style.display = 'none';
+      
+      const submitBtn = e.currentTarget.querySelector('.submit-btn');
+      const prevLabel = submitBtn.textContent;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Creating Account...';
+      
+      try {
+        const payload = {
+          name: form.get('name'),
+          email: form.get('email'),
+          password: form.get('password'),
+          userType
+        };
+        
+        if(userType === 'job_seeker') {
+          payload.jobTypePreference = jobType;
+        } else {
+          payload.employerType = employerType;
+        }
+        
+        const res = await HB.api.register(payload);
+        if(res && res.token){ HB.auth.setToken(res.token); }
+        if(userType==='employer'){
+          HB.navigateTo('/frontend/pages/employer/dashboard.html');
+        } else {
+          HB.navigateTo('/frontend/pages/job-seeker/dashboard.html');
+        }
+      } catch (err){
+        console.error('[Register] error', err);
+        errorBox.textContent = err?.message || 'Registration failed. Please try again.';
+        errorBox.style.display = 'block';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = prevLabel;
+      }
+    });
+  </script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/chatbot.js"></script>
+</body>
+</html>

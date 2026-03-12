@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Career Resources • HireBridge</title>
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/job-seeker.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <style>
+    .resources-container{max-width:1200px;margin:0 auto;padding:32px 24px}
+    .page-header{text-align:center;margin-bottom:48px}
+    .page-header h1{font-size:40px;font-weight:800;margin:0 0 12px;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .page-header p{color:var(--text-secondary);font-size:18px;margin:0}
+    
+    .resources-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;margin-bottom:48px}
+    .resource-card{background:var(--surface-color);border:1px solid var(--border-color);border-radius:20px;padding:32px;transition:all 0.3s ease;cursor:pointer}
+    .resource-card:hover{box-shadow:var(--card-shadow-hover);transform:translateY(-4px);border-color:var(--primary-color)}
+    .resource-icon{font-size:48px;margin-bottom:16px}
+    .resource-card h3{font-size:22px;margin:0 0 12px;color:var(--text-color)}
+    .resource-card p{color:var(--text-secondary);margin:0 0 20px;line-height:1.6}
+    .resource-badge{display:inline-block;padding:6px 12px;background:rgba(139,92,246,0.15);color:var(--primary-color);border-radius:20px;font-size:12px;font-weight:700}
+    
+    .section-title{font-size:28px;font-weight:700;margin:48px 0 24px;color:var(--text-color)}
+    .articles-list{display:grid;gap:20px}
+    .article-item{background:var(--surface-color);border:1px solid var(--border-color);border-radius:16px;padding:24px;display:flex;gap:20px;transition:all 0.3s ease;cursor:pointer}
+    .article-item:hover{box-shadow:var(--card-shadow);transform:translateX(4px)}
+    .article-thumb{width:120px;height:120px;border-radius:12px;background:var(--accent-gradient);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:48px}
+    .article-content{flex:1}
+    .article-meta{font-size:13px;color:var(--text-secondary);margin:0 0 8px}
+    .article-content h4{font-size:18px;margin:0 0 8px;color:var(--text-color)}
+    .article-content p{color:var(--text-secondary);margin:0;font-size:14px;line-height:1.5}
+  </style>
+</head>
+<body>
+  <header class="nav-job-seeker">
+    <a href="/frontend/pages/job-seeker/dashboard.html" class="nav-brand">
+      <img src="/frontend/public/assets/images/hirebridge-logo-full.svg" alt="HireBridge Logo">
+      <span class="nav-brand-text">HireBridge • Candidate</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="/frontend/pages/job-seeker/jobs.html">Jobs</a>
+      <a href="/frontend/pages/job-seeker/applications.html">Applications</a>
+      <a href="/frontend/pages/job-seeker/saved.html">Saved</a>
+      <a href="/frontend/pages/job-seeker/profile.html">Profile</a>
+      <a href="/frontend/pages/job-seeker/settings.html">Settings</a>
+      <button class="btn notification-bell" onclick="HB.showNotifications()">
+        <span>🔔</span>
+        <span class="notification-badge" id="notificationBadge">0</span>
+      </button>
+      <button class="btn theme-toggle" onclick="HB.toggleTheme()">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="btn-logout" onclick="HB.logout()">Logout</button>
+    </nav>
+  </header>
+
+  <main class="resources-container">
+    <div class="page-header">
+      <h1>📚 Career Resources</h1>
+      <p>Guides, tips, and tools to accelerate your job search</p>
+    </div>
+
+    <div class="resources-grid">
+      <div class="resource-card" onclick="scrollToSection('resume')">
+        <div class="resource-icon">📄</div>
+        <h3>Resume Writing</h3>
+        <p>Craft a compelling resume that gets you noticed by recruiters and ATS systems.</p>
+        <span class="resource-badge">12 Articles</span>
+      </div>
+
+      <div class="resource-card" onclick="scrollToSection('interview')">
+        <div class="resource-icon">🎯</div>
+        <h3>Interview Prep</h3>
+        <p>Master common interview questions and learn techniques to ace your next interview.</p>
+        <span class="resource-badge">18 Articles</span>
+      </div>
+
+      <div class="resource-card" onclick="scrollToSection('skills')">
+        <div class="resource-icon">💡</div>
+        <h3>Skill Development</h3>
+        <p>Free courses and resources to level up your technical and soft skills.</p>
+        <span class="resource-badge">25+ Courses</span>
+      </div>
+
+      <div class="resource-card" onclick="scrollToSection('salary')">
+        <div class="resource-icon">💰</div>
+        <h3>Salary Guides</h3>
+        <p>Research market rates and learn how to negotiate your compensation package.</p>
+        <span class="resource-badge">8 Guides</span>
+      </div>
+
+      <div class="resource-card" onclick="scrollToSection('networking')">
+        <div class="resource-icon">🤝</div>
+        <h3>Networking Tips</h3>
+        <p>Build meaningful professional connections and expand your career network.</p>
+        <span class="resource-badge">10 Articles</span>
+      </div>
+
+      <div class="resource-card" onclick="scrollToSection('career')">
+        <div class="resource-icon">🚀</div>
+        <h3>Career Growth</h3>
+        <p>Strategies for advancing your career and achieving your professional goals.</p>
+        <span class="resource-badge">15 Articles</span>
+      </div>
+    </div>
+
+    <h2 class="section-title" id="resume">📄 Resume Writing</h2>
+    <div class="articles-list">
+      <div class="article-item">
+        <div class="article-thumb">📝</div>
+        <div class="article-content">
+          <p class="article-meta">5 min read • Resume Tips</p>
+          <h4>How to Write a Resume That Passes ATS</h4>
+          <p>Learn the key strategies to optimize your resume for Applicant Tracking Systems and increase your chances of getting noticed.</p>
+        </div>
+      </div>
+
+      <div class="article-item">
+        <div class="article-thumb">✨</div>
+        <div class="article-content">
+          <p class="article-meta">7 min read • Templates</p>
+          <h4>10 Modern Resume Templates for 2025</h4>
+          <p>Discover professionally designed resume templates that will make you stand out from the competition.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title" id="interview">🎯 Interview Preparation</h2>
+    <div class="articles-list">
+      <div class="article-item">
+        <div class="article-thumb">💬</div>
+        <div class="article-content">
+          <p class="article-meta">10 min read • Interview</p>
+          <h4>50 Common Interview Questions and How to Answer Them</h4>
+          <p>Master the most frequently asked interview questions with expert-backed answers and examples.</p>
+        </div>
+      </div>
+
+      <div class="article-item">
+        <div class="article-thumb">🎥</div>
+        <div class="article-content">
+          <p class="article-meta">6 min read • Virtual Interviews</p>
+          <h4>Acing Virtual Interviews: A Complete Guide</h4>
+          <p>Tips and best practices for succeeding in video interviews and making a great impression remotely.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title" id="skills">💡 Skill Development</h2>
+    <div class="articles-list">
+      <div class="article-item">
+        <div class="article-thumb">🎓</div>
+        <div class="article-content">
+          <p class="article-meta">Free Courses • Learning</p>
+          <h4>Top Free Online Courses for Tech Professionals</h4>
+          <p>Curated list of high-quality free courses to boost your technical skills and stay competitive.</p>
+        </div>
+      </div>
+
+      <div class="article-item">
+        <div class="article-thumb">🔧</div>
+        <div class="article-content">
+          <p class="article-meta">8 min read • Skills</p>
+          <h4>In-Demand Skills for 2025 and Beyond</h4>
+          <p>Discover which skills are most sought-after by employers and how to acquire them.</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title" id="salary">💰 Salary Negotiation</h2>
+    <div class="articles-list">
+      <div class="article-item">
+        <div class="article-thumb">💵</div>
+        <div class="article-content">
+          <p class="article-meta">12 min read • Negotiation</p>
+          <h4>How to Negotiate Your Salary Like a Pro</h4>
+          <p>Proven strategies and scripts for negotiating a higher salary and better benefits package.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script>
+    function scrollToSection(id) {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  </script>
+</body>
+</html>

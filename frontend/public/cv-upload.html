@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart CV Parser • HireBridge</title>
+  <link rel="icon" type="image/svg+xml" href="/frontend/public/assets/images/hirebridge-logo-full.svg">
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <style>
+    .cv-hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      margin: -16px -16px 40px;
+      border-radius: 0 0 24px 24px;
+    }
+    .cv-hero h1 { font-size: 48px; margin: 0 0 16px; font-weight: 800; }
+    .cv-hero p { font-size: 20px; margin: 0; opacity: 0.95; }
+    
+    .upload-section {
+      max-width: 700px;
+      margin: 40px auto;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 40px;
+    }
+    .upload-area {
+      border: 3px dashed var(--border-color);
+      border-radius: 16px;
+      padding: 60px 40px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: var(--background-color);
+    }
+    .upload-area:hover, .upload-area.drag-over {
+      border-color: var(--primary-color);
+      background: rgba(139, 92, 246, 0.05);
+    }
+    .upload-icon { font-size: 64px; margin-bottom: 16px; }
+    .upload-area h3 { font-size: 24px; margin: 0 0 12px; color: var(--text-color); }
+    .upload-area p { font-size: 15px; color: var(--text-secondary); margin: 0 0 20px; }
+    .file-input { display: none; }
+    .upload-btn {
+      padding: 12px 32px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .upload-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3); }
+    
+    .parsed-data {
+      display: none;
+      margin-top: 40px;
+      padding: 32px;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+    }
+    .parsed-data h2 { font-size: 28px; margin: 0 0 24px; color: var(--text-color); }
+    .data-section { margin-bottom: 24px; }
+    .data-section h3 { font-size: 18px; margin: 0 0 12px; color: var(--primary-color); }
+    .data-section p { margin: 0; line-height: 1.6; color: var(--text-secondary); }
+    .skills-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .skill-tag {
+      padding: 8px 16px;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(20, 184, 166, 0.15));
+      color: var(--primary-color);
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--border-color);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #8b5cf6, #14b8a6);
+      width: 0%;
+      transition: width 2s ease;
+    }
+    .processing {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .spinner {
+      border: 4px solid var(--border-color);
+      border-top: 4px solid var(--primary-color);
+      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="/frontend/public/index.html" class="brand" style="text-decoration: none; cursor: pointer;">
+        <span class="logo"></span>
+        <span>HireBridge</span>
+      </a>
+      <nav class="primary-nav">
+        <a href="/frontend/public/login.html">Login</a>
+        <a href="/frontend/public/register.html" class="btn">Sign up</a>
+        <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 1100px;">
+    <div class="cv-hero">
+      <h1>📄 Smart CV Parser</h1>
+      <p>Upload your resume and let AI extract your skills, experience, and qualifications</p>
+    </div>
+
+    <div class="upload-section">
+      <div class="upload-area" id="uploadArea">
+        <div class="upload-icon">📤</div>
+        <h3>Drop your CV/Resume here</h3>
+        <p>or click to browse (PDF, DOC, DOCX - Max 5MB)</p>
+        <button class="upload-btn" onclick="document.getElementById('cvFile').click()">Choose File</button>
+        <input type="file" id="cvFile" class="file-input" accept=".pdf,.doc,.docx">
+      </div>
+      
+      <div class="processing" id="processing">
+        <div class="spinner"></div>
+        <p style="color: var(--text-secondary); font-size: 16px;">Processing your CV with AI...</p>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="parsed-data" id="parsedData">
+      <h2>✅ Successfully Parsed Your CV</h2>
+      
+      <div class="data-section">
+        <h3>👤 Personal Information</h3>
+        <p><strong>Name:</strong> <span id="name">John Doe</span></p>
+        <p><strong>Email:</strong> <span id="email">john.doe@example.com</span></p>
+        <p><strong>Phone:</strong> <span id="phone">+91 98765 43210</span></p>
+        <p><strong>Location:</strong> <span id="location">Bangalore, India</span></p>
+      </div>
+
+      <div class="data-section">
+        <h3>🎓 Education</h3>
+        <p id="education">B.Tech in Computer Science, XYZ University (2020-2024)</p>
+      </div>
+
+      <div class="data-section">
+        <h3>💼 Experience</h3>
+        <p id="experience">Software Development Intern at ABC Tech (6 months)<br>Frontend Developer at Startup XYZ (1 year)</p>
+      </div>
+
+      <div class="data-section">
+        <h3>💡 Skills Detected</h3>
+        <div class="skills-tags" id="skillsTags">
+          <span class="skill-tag">JavaScript</span>
+          <span class="skill-tag">React</span>
+          <span class="skill-tag">Node.js</span>
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">SQL</span>
+          <span class="skill-tag">Git</span>
+          <span class="skill-tag">MongoDB</span>
+          <span class="skill-tag">Docker</span>
+        </div>
+      </div>
+
+      <div class="data-section">
+        <h3>🏆 Certifications</h3>
+        <p id="certifications">AWS Certified Solutions Architect<br>Google Cloud Professional</p>
+      </div>
+
+      <div style="margin-top: 32px; text-align: center;">
+        <button class="upload-btn" onclick="saveProfile()">Save to Profile</button>
+        <button class="upload-btn" onclick="location.reload()" style="background: var(--border-color); color: var(--text-color); margin-left: 12px;">Upload Another</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script>
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('cvFile');
+    const processing = document.getElementById('processing');
+    const parsedData = document.getElementById('parsedData');
+    const progressFill = document.getElementById('progressFill');
+
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('drag-over');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('drag-over');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('drag-over');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        handleFile(files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    function handleFile(file) {
+      // Validate file size
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size should not exceed 5MB');
+        return;
+      }
+
+      // Validate file type
+      const validTypes = ['.pdf', '.doc', '.docx'];
+      const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+      if (!validTypes.includes(fileExt)) {
+        alert('Please upload a PDF, DOC, or DOCX file');
+        return;
+      }
+
+      // Show processing
+      uploadArea.style.display = 'none';
+      processing.style.display = 'block';
+      
+      // Simulate AI processing
+      setTimeout(() => {
+        progressFill.style.width = '100%';
+      }, 100);
+
+      setTimeout(() => {
+        processing.style.display = 'none';
+        parsedData.style.display = 'block';
+        parsedData.scrollIntoView({ behavior: 'smooth' });
+      }, 2500);
+    }
+
+    function saveProfile() {
+      alert('✅ CV data saved to your profile!\n\nYou can now apply to jobs with this information.');
+      setTimeout(() => {
+        window.location.href = '/frontend/public/register.html?type=seeker';
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

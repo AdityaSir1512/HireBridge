@@ -1,0 +1,5 @@
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+  .nav-menu { flex-direction: column; gap: 12px; }
+}

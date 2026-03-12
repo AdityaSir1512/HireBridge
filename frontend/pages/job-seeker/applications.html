@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Applications • Candidate</title>
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/job-seeker.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/notifications.css">
+  <style>
+    .page-container{max-width:1400px;margin:0 auto;padding:32px 48px;width:100%}
+    .page-header{margin-bottom:32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+    .page-header h1{font-size:32px;font-weight:800;margin:0;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-bottom:32px}
+    .stat-card{background:var(--surface-color);border-radius:16px;padding:20px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);text-align:center}
+    .stat-value{font-size:32px;font-weight:800;color:var(--text-color);margin:0 0 4px 0}
+    .stat-label{font-size:13px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;font-weight:600}
+    .filters-section{background:var(--surface-color);border-radius:16px;padding:20px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);margin-bottom:24px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .filter-select{padding:10px 16px;border-radius:10px;border:2px solid var(--border-color);background:var(--background-color);color:var(--text-color);font-size:14px;font-family:inherit;cursor:pointer}
+    .applications-list{display:grid;gap:16px}
+    .application-card{background:var(--surface-color);border-radius:20px;padding:28px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);transition:all 0.3s ease}
+    .application-card:hover{box-shadow:0 8px 30px rgba(0,0,0,0.12)}
+    .app-header{display:flex;align-items:start;justify-content:space-between;gap:20px;margin-bottom:20px}
+    .app-left{flex:1;min-width:0}
+    .app-title{font-size:20px;font-weight:700;color:var(--text-color);margin:0 0 8px 0}
+    .app-company{font-size:15px;color:var(--text-secondary);margin:0 0 12px 0;display:flex;align-items:center;gap:8px}
+    .app-meta{display:flex;flex-wrap:wrap;gap:12px}
+    .meta-item{font-size:14px;color:var(--text-secondary);display:flex;align-items:center;gap:6px}
+    .status-badge{padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+    .status-submitted{background:linear-gradient(135deg,rgba(59,130,246,0.15),rgba(37,99,235,0.15));color:#2563eb}
+    .status-reviewing{background:linear-gradient(135deg,rgba(245,158,11,0.15),rgba(217,119,6,0.15));color:#d97706}
+    .status-interview{background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(124,58,237,0.15));color:#7c3aed}
+    .status-accepted{background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(5,150,105,0.15));color:#059669}
+    .status-rejected{background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(220,38,38,0.15));color:#dc2626}
+    .app-timeline{margin-top:20px;padding-top:20px;border-top:1px solid var(--border-color)}
+    .timeline-item{display:flex;gap:12px;margin-bottom:12px}
+    .timeline-item:last-child{margin-bottom:0}
+    .timeline-dot{width:10px;height:10px;border-radius:50%;background:var(--primary-color);margin-top:6px;flex-shrink:0}
+    .timeline-content{flex:1}
+    .timeline-title{font-size:14px;font-weight:600;color:var(--text-color);margin:0 0 4px 0}
+    .timeline-time{font-size:12px;color:var(--text-secondary)}
+    .app-actions{display:flex;gap:12px;margin-top:20px;padding-top:20px;border-top:1px solid var(--border-color)}
+    .btn-action{padding:10px 20px;border-radius:10px;border:2px solid var(--border-color);background:transparent;color:var(--text-color);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s ease}
+    .btn-action:hover{border-color:var(--primary-color);background:rgba(139,92,246,0.1);color:var(--primary-color)}
+    .btn-primary{border:none;background:var(--accent-gradient);color:#fff;box-shadow:0 4px 20px rgba(139,92,246,0.3)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(139,92,246,0.4)}
+    .empty-state{text-align:center;padding:80px 20px;color:var(--text-secondary)}
+    .empty-state .icon{font-size:64px;margin-bottom:16px}
+    .empty-state h3{font-size:20px;font-weight:700;color:var(--text-color);margin:0 0 8px 0}
+    @media (max-width: 768px) {
+      .app-header{flex-direction:column;align-items:stretch}
+      .app-actions{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+  <header class="nav-job-seeker">
+    <a href="/frontend/pages/job-seeker/dashboard.html" class="nav-brand" title="Go to Dashboard">
+      <img src="/frontend/public/assets/images/hirebridge-logo-full.svg" alt="HireBridge Logo">
+      <span class="nav-brand-text">HireBridge • Candidate</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="/frontend/pages/job-seeker/dashboard.html">Dashboard</a>
+      <a href="/frontend/pages/job-seeker/jobs.html">Jobs</a>
+      <a href="/frontend/pages/job-seeker/applications.html" style="background:var(--background-color)">Applications</a>
+      <a href="/frontend/pages/job-seeker/saved.html">Saved</a>
+      <a href="/frontend/pages/job-seeker/profile.html">Profile</a>
+      <a href="/frontend/pages/job-seeker/settings.html">Settings</a>
+      <button class="btn-messages" onclick="window.location.href='/frontend/pages/job-seeker/messages.html'" title="Messages" aria-label="Messages">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z"/>
+          <path d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0015.75 7.5z"/>
+        </svg>
+        <span>Messages</span>
+        <span class="message-badge" id="messageBadge" style="display: none;">0</span>
+      </button>
+      <button class="btn notification-bell" onclick="HB.showNotifications()" title="Notifications">
+        <span>🔔</span>
+        <span class="notification-badge">3</span>
+      </button>
+      <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="btn-logout" onclick="HB.logout()" title="Logout" aria-label="Logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <div class="page-header">
+      <h1>My Applications 📝</h1>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="totalApps">0</div>
+        <div class="stat-label">Total Applied</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="pendingApps">0</div>
+        <div class="stat-label">Under Review</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="interviewApps">0</div>
+        <div class="stat-label">Interviews</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="acceptedApps">0</div>
+        <div class="stat-label">Accepted</div>
+      </div>
+    </div>
+
+    <div class="filters-section">
+      <label style="font-size:14px;font-weight:600;color:var(--text-secondary)">Filter by status:</label>
+      <select class="filter-select" id="statusFilter" onchange="filterApplications()">
+        <option value="">All Statuses</option>
+        <option value="submitted">Submitted</option>
+        <option value="reviewing">Under Review</option>
+        <option value="interview">Interview Scheduled</option>
+        <option value="accepted">Accepted</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+
+    <div id="applicationsList" class="applications-list">
+      <div class="empty-state">
+        <div class="icon">⏳</div>
+        <h3>Loading your applications...</h3>
+        <p>Please wait while we fetch your application data</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script>
+    const API_BASE = window.HB?.api?.base || '/api';
+    let allApplications = [];
+    let jobsCache = {};
+
+    // Helper to get auth token
+    function getAuthToken() {
+      if (window.HB?.auth?.getToken) {
+        const token = window.HB.auth.getToken();
+        if (token) return token;
+      }
+      return localStorage.getItem('hb_token') || localStorage.getItem('token');
+    }
+
+    // Helper to decode JWT token
+    function decodeToken(token) {
+      try {
+        if (!token) return null;
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        return null;
+      }
+    }
+
+    // Format time ago
+    function timeAgo(date) {
+      const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+      
+      const intervals = [
+        { label: 'year', seconds: 31536000 },
+        { label: 'month', seconds: 2592000 },
+        { label: 'week', seconds: 604800 },
+        { label: 'day', seconds: 86400 },
+        { label: 'hour', seconds: 3600 },
+        { label: 'minute', seconds: 60 }
+      ];
+      
+      for (const interval of intervals) {
+        const count = Math.floor(seconds / interval.seconds);
+        if (count >= 1) {
+          return count === 1 ? `1 ${interval.label} ago` : `${count} ${interval.label}s ago`;
+        }
+      }
+      return 'just now';
+    }
+
+    // Format date nicely
+    function formatDate(date) {
+      return new Date(date).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // Get status info
+    function getStatusInfo(status) {
+      const statusMap = {
+        'submitted': { label: 'Submitted', class: 'status-submitted', emoji: '✅' },
+        'review': { label: 'Under Review', class: 'status-reviewing', emoji: '👀' },
+        'reviewing': { label: 'Under Review', class: 'status-reviewing', emoji: '👀' },
+        'shortlisted': { label: 'Shortlisted', class: 'status-interview', emoji: '⭐' },
+        'interview': { label: 'Interview', class: 'status-interview', emoji: '📅' },
+        'rejected': { label: 'Rejected', class: 'status-rejected', emoji: '❌' },
+        'hired': { label: 'Accepted', class: 'status-accepted', emoji: '🎉' },
+        'accepted': { label: 'Accepted', class: 'status-accepted', emoji: '🎉' }
+      };
+      return statusMap[status] || { label: status, class: 'status-submitted', emoji: '📄' };
+    }
+
+    // Fetch job details
+    async function fetchJobDetails(jobId) {
+      if (jobsCache[jobId]) {
+        return jobsCache[jobId];
+      }
+
+      const token = getAuthToken();
+      try {
+        const response = await fetch(`${API_BASE}/jobs/${jobId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const job = data.job || data;
+          jobsCache[jobId] = job;
+          return job;
+        }
+      } catch (error) {
+        console.error('Error fetching job:', error);
+      }
+      return null;
+    }
+
+    // Render application card
+    function renderApplicationCard(app, job) {
+      const statusInfo = getStatusInfo(app.status);
+      const jobTitle = job ? (job.title || 'Job Position') : 'Job Position';
+      const company = job?.company?.name || job?.company || 'Company';
+      const location = job?.location || 'Location not specified';
+      const jobType = job?.jobType || 'full_time';
+      const appliedDate = timeAgo(app.createdAt);
+
+      return `
+        <div class="application-card" data-status="${app.status}">
+          <div class="app-header">
+            <div class="app-left">
+              <h3 class="app-title">${jobTitle}</h3>
+              <p class="app-company">🏢 ${company}</p>
+              <div class="app-meta">
+                <span class="meta-item">📍 ${location}</span>
+                <span class="meta-item">💼 ${jobType.replace('_', ' ')}</span>
+                <span class="meta-item">📅 Applied ${appliedDate}</span>
+              </div>
+            </div>
+            <div>
+              <span class="status-badge ${statusInfo.class}">${statusInfo.emoji} ${statusInfo.label}</span>
+            </div>
+          </div>
+
+          <div class="app-timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <div class="timeline-content">
+                <div class="timeline-title">✅ Application Submitted</div>
+                <div class="timeline-time">${formatDate(app.createdAt)}</div>
+              </div>
+            </div>
+            ${app.updatedAt !== app.createdAt ? `
+              <div class="timeline-item">
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                  <div class="timeline-title">${statusInfo.emoji} ${statusInfo.label}</div>
+                  <div class="timeline-time">${formatDate(app.updatedAt)}</div>
+                </div>
+              </div>
+            ` : ''}
+          </div>
+
+          ${app.coverLetter ? `
+            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-color)">
+              <div style="font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:8px">Cover Letter:</div>
+              <div style="font-size:14px;color:var(--text-color);line-height:1.6">${app.coverLetter}</div>
+            </div>
+          ` : ''}
+
+          <div class="app-actions">
+            <button class="btn-action btn-primary" onclick="viewJob('${app.jobId}')">View Job</button>
+            ${app.status === 'submitted' ? `<button class="btn-action" onclick="withdrawApplication('${app._id}')">Withdraw</button>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    // View job details
+    function viewJob(jobId) {
+      if (!jobId) {
+        alert('Job information not available');
+        return;
+      }
+      window.location.href = `/frontend/pages/job-seeker/job-detail.html?id=${jobId}`;
+    }
+
+    // Load applications
+    async function loadApplications() {
+      const token = getAuthToken();
+      
+      if (!token) {
+        document.getElementById('applicationsList').innerHTML = `
+          <div class="empty-state">
+            <div class="icon">🔒</div>
+            <h3>Please Log In</h3>
+            <p>You need to be logged in to view your applications</p>
+            <button class="btn-action btn-primary" onclick="window.location.href='/frontend/public/login.html'" style="margin-top:20px">Go to Login</button>
+          </div>
+        `;
+        return;
+      }
+
+      const tokenData = decodeToken(token);
+      if (!tokenData || !tokenData.userId) {
+        console.error('Invalid token');
+        return;
+      }
+
+      try {
+        console.log('📥 Loading applications for user:', tokenData.userId);
+        
+        const response = await fetch(`${API_BASE}/applications/user/${tokenData.userId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        allApplications = data.applications || [];
+
+        console.log('✅ Loaded applications:', allApplications.length);
+
+        if (allApplications.length === 0) {
+          document.getElementById('applicationsList').innerHTML = `
+            <div class="empty-state">
+              <div class="icon">📭</div>
+              <h3>No Applications Yet</h3>
+              <p>You haven't applied to any jobs yet. Start exploring opportunities!</p>
+              <button class="btn-action btn-primary" onclick="window.location.href='/frontend/pages/job-seeker/jobs.html'" style="margin-top:20px">Browse Jobs</button>
+            </div>
+          `;
+          updateStats();
+          return;
+        }
+
+        // Fetch job details for all applications
+        const applicationsWithJobs = await Promise.all(
+          allApplications.map(async (app) => {
+            const job = await fetchJobDetails(app.jobId);
+            return { app, job };
+          })
+        );
+
+        // Render applications
+        const html = applicationsWithJobs
+          .map(({ app, job }) => renderApplicationCard(app, job))
+          .join('');
+
+        document.getElementById('applicationsList').innerHTML = html;
+        updateStats();
+
+      } catch (error) {
+        console.error('❌ Error loading applications:', error);
+        document.getElementById('applicationsList').innerHTML = `
+          <div class="empty-state">
+            <div class="icon">⚠️</div>
+            <h3>Error Loading Applications</h3>
+            <p>${error.message}</p>
+            <button class="btn-action btn-primary" onclick="loadApplications()" style="margin-top:20px">Try Again</button>
+          </div>
+        `;
+      }
+    }
+
+    // Update stats
+    function updateStats() {
+      const total = allApplications.length;
+      const pending = allApplications.filter(a => a.status === 'submitted' || a.status === 'review' || a.status === 'reviewing').length;
+      const interview = allApplications.filter(a => a.status === 'interview' || a.status === 'shortlisted').length;
+      const accepted = allApplications.filter(a => a.status === 'hired' || a.status === 'accepted').length;
+
+      document.getElementById('totalApps').textContent = total;
+      document.getElementById('pendingApps').textContent = pending;
+      document.getElementById('interviewApps').textContent = interview;
+      document.getElementById('acceptedApps').textContent = accepted;
+    }
+
+    function filterApplications() {
+      const filter = document.getElementById('statusFilter').value;
+      const cards = document.querySelectorAll('.application-card');
+      
+      cards.forEach(card => {
+        if (!filter) {
+          card.style.display = 'block';
+        } else {
+          const status = card.dataset.status;
+          // Handle multiple status values
+          const matches = (filter === 'reviewing' && (status === 'review' || status === 'reviewing')) ||
+                         (filter === 'accepted' && (status === 'hired' || status === 'accepted')) ||
+                         status === filter;
+          card.style.display = matches ? 'block' : 'none';
+        }
+      });
+    }
+
+    async function withdrawApplication(appId) {
+      if (!confirm('Are you sure you want to withdraw this application? This action cannot be undone.')) {
+        return;
+      }
+
+      const token = getAuthToken();
+      if (!token) {
+        alert('Please log in to withdraw applications');
+        return;
+      }
+
+      try {
+        console.log('🗑️ Withdrawing application:', appId);
+        
+        const response = await fetch(`${API_BASE}/applications/${appId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          console.log('✅ Application withdrawn successfully');
+          
+          // Show success notification
+          if (window.HB?.notifications?.showToast) {
+            window.HB.notifications.showToast({
+              title: 'Application Withdrawn',
+              message: 'Your application has been withdrawn successfully',
+              icon: '✓'
+            });
+          } else {
+            alert('✅ Application withdrawn successfully');
+          }
+          
+          // Reload applications
+          loadApplications();
+        } else {
+          console.error('❌ Failed to withdraw:', data);
+          alert(data.message || 'Failed to withdraw application. It may have already been reviewed.');
+        }
+      } catch (error) {
+        console.error('❌ Error withdrawing application:', error);
+        alert('Error: ' + error.message);
+      }
+    }
+
+    // Load on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('🚀 Applications page loading...');
+      loadApplications();
+    });
+  </script>
+  <script src="/frontend/public/js/common/chatbot.js"></script>
+</body>
+</html>

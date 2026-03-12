@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manage Jobs • Employer</title>
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/employer.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/notifications.css">
+  <style>
+    .page-container{max-width:1400px;margin:0 auto;padding:32px 24px}
+    .page-header{margin-bottom:32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px}
+    .page-header h1{font-size:32px;font-weight:800;margin:0;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .header-actions{display:flex;gap:12px;align-items:center}
+    .btn-primary{background:var(--accent-gradient);color:#fff;padding:12px 24px;border-radius:12px;border:none;font-weight:700;cursor:pointer;transition:all 0.3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(139,92,246,0.3)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 30px rgba(139,92,246,0.4)}
+    .jobs-grid{display:grid;gap:20px}
+    .job-card{background:var(--surface-color);border-radius:16px;padding:24px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);transition:all 0.3s ease}
+    .job-card:hover{box-shadow:var(--card-shadow-hover);transform:translateY(-2px)}
+    .job-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;gap:16px}
+    .job-title{font-size:20px;font-weight:700;margin:0 0 8px 0;color:var(--text-color)}
+    .job-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+    .meta-tag{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:13px;font-weight:600;background:var(--background-color);border:1px solid var(--border-color)}
+    .job-status{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+    .job-status.active{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46}
+    .job-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:16px;padding:16px;background:var(--background-color);border-radius:12px;margin-bottom:16px}
+    .stat-item{text-align:center}
+    .stat-value{font-size:24px;font-weight:800;color:var(--text-color);margin-bottom:4px}
+    .stat-label{font-size:12px;color:var(--text-secondary);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+    .job-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn-action{padding:10px 18px;border-radius:10px;border:2px solid var(--border-color);background:var(--surface-color);color:var(--text-color);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s ease;display:inline-flex;align-items:center;gap:6px;text-decoration:none}
+    .btn-action:hover{border-color:var(--primary-color);background:var(--background-color);transform:translateY(-2px)}
+    .btn-action.primary{background:var(--accent-gradient);color:#fff;border-color:transparent}
+    .btn-action.primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(139,92,246,0.3)}
+    @media (max-width: 768px) {
+      .page-header{flex-direction:column;align-items:flex-start}
+      .job-header{flex-direction:column}
+    }
+  </style>
+</head>
+<body>
+  <header class="nav-employer">
+    <a href="/frontend/pages/employer/dashboard.html" class="nav-brand" title="Go to Dashboard">
+      <img src="/frontend/public/assets/images/hirebridge-logo-full.svg" alt="HireBridge Logo">
+      <span class="nav-brand-text">HireBridge • Employer</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="/frontend/pages/employer/post-job.html">Post Job</a>
+      <a href="/frontend/pages/employer/manage-jobs.html" style="background:var(--background-color)">Manage Jobs</a>
+      <a href="/frontend/pages/employer/applications.html">Applications</a>
+      <a href="/frontend/pages/employer/candidates.html">Candidates</a>
+      <a href="/frontend/pages/employer/company-profile.html">Company</a>
+      <a href="/frontend/pages/employer/analytics.html">Analytics</a>
+      <a href="/frontend/pages/employer/settings.html">Settings</a>
+      <button class="btn-messages" onclick="window.location.href='/frontend/pages/employer/messages.html'" title="Messages" aria-label="Messages">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z"/>
+          <path d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.940v-4.286c0-1.505-1.125-2.811-2.664-2.940A49.392 49.392 0 0015.75 7.5z"/>
+        </svg>
+        <span>Messages</span>
+        <span class="message-badge" id="messageBadge" style="display: none;">0</span>
+      </button>
+      <button class="btn notification-bell" onclick="HB.showNotifications()" title="Notifications">
+        <span>🔔</span>
+        <span class="notification-badge">5</span>
+      </button>
+      <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="btn-logout" onclick="HB.logout()" title="Logout" aria-label="Logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <div class="page-header">
+      <div><h1>Manage Jobs 💼</h1></div>
+      <div class="header-actions">
+        <a href="/frontend/pages/employer/post-job.html" class="btn-primary">➕ Post New Job</a>
+      </div>
+    </div>
+
+    <div class="jobs-grid" id="jobsGrid">
+      <div style="text-align:center;padding:40px;color:var(--text-secondary)">
+        <p>Loading your jobs...</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script src="/frontend/public/js/common/chatbot.js"></script>
+  <script>
+    // Load employer's jobs
+    window.addEventListener('DOMContentLoaded', loadJobs);
+
+    async function loadJobs() {
+      const token = HB?.auth?.getToken?.();
+      if (!token) {
+        window.location.href = '/frontend/public/login.html';
+        return;
+      }
+
+      try {
+        // Get userId from token
+        const tokenData = JSON.parse(atob(token.split('.')[1]));
+        const userId = tokenData.userId;
+
+        // Fetch all jobs and filter by employer
+        const response = await HB.api.listJobs();
+        const allJobs = response.jobs || response || [];
+        
+        // Filter jobs by this employer's userId
+        const myJobs = allJobs.filter(job => job.employerId === userId || job.postedBy === userId);
+        
+        // Fetch all applications for this employer
+        const appResponse = await fetch('/api/applications/employer/all', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        let applications = [];
+        if (appResponse.ok) {
+          const appData = await appResponse.json();
+          applications = appData.applications || [];
+        }
+        
+        // Count applications and shortlisted for each job
+        myJobs.forEach(job => {
+          const jobApps = applications.filter(app => String(app.jobId) === String(job._id));
+          job.applicationsCount = jobApps.length;
+          job.shortlistedCount = jobApps.filter(app => app.status === 'shortlisted' || app.status === 'interview' || app.status === 'hired').length;
+          job.viewsCount = job.views || 0;
+        });
+        
+        displayJobs(myJobs);
+      } catch (error) {
+        console.error('Error loading jobs:', error);
+        document.getElementById('jobsGrid').innerHTML = `
+          <div style="text-align:center;padding:40px;color:var(--text-secondary)">
+            <p>❌ Error loading jobs: ${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function displayJobs(jobs) {
+      const container = document.getElementById('jobsGrid');
+      
+      if (!jobs || jobs.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:60px 20px;color:var(--text-secondary)">
+            <div style="font-size:64px;margin-bottom:20px">💼</div>
+            <h2 style="font-size:24px;margin:0 0 12px;color:var(--text-color)">No Jobs Posted Yet</h2>
+            <p style="margin:0 0 24px">Start by posting your first job opening</p>
+            <a href="/frontend/pages/employer/post-job.html" class="btn-action primary">➕ Post New Job</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = jobs.map(job => {
+        const postedDate = new Date(job.createdAt || job.postedDate);
+        const daysAgo = Math.floor((Date.now() - postedDate) / (1000 * 60 * 60 * 24));
+        const timeText = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : `${daysAgo} days ago`;
+        
+        const jobTypeIcon = job.jobType === 'full-time' ? '💼' : 
+                           job.jobType === 'freelancer' ? '🎯' : 
+                           job.jobType === 'internship' ? '🎓' : '💼';
+        
+        const locationIcon = job.location?.toLowerCase().includes('remote') ? '🏠' : '📍';
+        
+        return `
+          <div class="job-card" data-job-id="${job._id}">
+            <div class="job-header">
+              <div>
+                <h3 class="job-title">${job.title || 'Untitled Job'}</h3>
+                <div class="job-meta">
+                  <span class="meta-tag">${jobTypeIcon} ${formatJobType(job.jobType)}</span>
+                  ${job.location ? `<span class="meta-tag">${locationIcon} ${job.location}</span>` : ''}
+                  <span class="meta-tag">📅 Posted ${timeText}</span>
+                </div>
+              </div>
+              <span class="job-status ${job.status || 'active'}">${formatStatus(job.status)}</span>
+            </div>
+            <div class="job-stats">
+              <div class="stat-item">
+                <div class="stat-value">${job.applicationsCount || 0}</div>
+                <div class="stat-label">Applications</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${job.shortlistedCount || 0}</div>
+                <div class="stat-label">Shortlisted</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-value">${job.viewsCount || 0}</div>
+                <div class="stat-label">Views</div>
+              </div>
+            </div>
+            <div class="job-actions">
+              <a href="/frontend/pages/employer/applications.html?jobId=${job._id}" class="btn-action primary">📨 View Applications</a>
+              <button class="btn-action" onclick="editJob('${job._id}')">✏️ Edit</button>
+              <button class="btn-action" onclick="toggleJobStatus('${job._id}', '${job.status || 'active'}')">
+                ${job.status === 'paused' ? '▶️ Activate' : '⏸️ Pause'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function formatJobType(type) {
+      if (!type) return 'Full-time';
+      return type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ');
+    }
+
+    function formatStatus(status) {
+      if (!status || status === 'active') return 'Active';
+      return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+
+    function editJob(jobId) {
+      // For now, just redirect to post-job page
+      // In future, you could pass jobId as query param and pre-fill the form
+      alert('Edit functionality coming soon!');
+    }
+
+    async function toggleJobStatus(jobId, currentStatus) {
+      const newStatus = currentStatus === 'paused' ? 'active' : 'paused';
+      
+      try {
+        // Update job status via API
+        const token = HB?.auth?.getToken?.();
+        await fetch(`http://localhost:3000/api/jobs/${jobId}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+        
+        // Reload jobs
+        await loadJobs();
+        
+        if (window.HB?.notifications?.showToast) {
+          window.HB.notifications.showToast({
+            title: 'Success',
+            message: `Job ${newStatus === 'active' ? 'activated' : 'paused'} successfully`,
+            icon: '✅'
+          });
+        }
+      } catch (error) {
+        console.error('Error toggling job status:', error);
+        alert('Failed to update job status');
+      }
+    }
+  </script>
+</body>
+</html>

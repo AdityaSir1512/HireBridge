@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Applications • Employer</title>
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/employer.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/notifications.css">
+  <style>
+    .page-container{max-width:1400px;margin:0 auto;padding:32px 24px}
+    .page-header{margin-bottom:32px}
+    .page-header h1{font-size:32px;font-weight:800;margin:0 0 8px 0;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .page-header .subtitle{color:var(--text-secondary);font-size:15px}
+    .filters-bar{background:var(--surface-color);border-radius:16px;padding:20px;border:1px solid var(--border-color);margin-bottom:24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .filter-select{padding:10px 14px;border-radius:10px;border:2px solid var(--border-color);background:var(--background-color);color:var(--text-color);font-size:14px;font-weight:500}
+    .applications-grid{display:grid;gap:16px}
+    .application-card{background:var(--surface-color);border-radius:16px;padding:24px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);transition:all 0.3s ease;display:flex;gap:20px;align-items:flex-start}
+    .application-card:hover{box-shadow:var(--card-shadow-hover);transform:translateY(-2px)}
+    .applicant-avatar{width:72px;height:72px;border-radius:16px;background:var(--accent-gradient);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;flex-shrink:0}
+    .applicant-info{flex:1;min-width:0}
+    .applicant-name{font-size:20px;font-weight:700;margin:0 0 6px 0;color:var(--text-color)}
+    .applicant-role{color:var(--text-secondary);font-size:15px;margin:0 0 12px 0}
+    .applicant-meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+    .meta-badge{font-size:13px;padding:6px 12px;border-radius:20px;background:var(--background-color);border:1px solid var(--border-color);font-weight:600;display:inline-flex;align-items:center;gap:4px}
+    .meta-badge.match{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46;border-color:transparent}
+    .application-actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+    .btn-action{padding:10px 18px;border-radius:10px;border:2px solid var(--border-color);background:var(--surface-color);color:var(--text-color);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s ease;display:inline-flex;align-items:center;gap:6px}
+    .btn-action:hover{border-color:var(--primary-color);background:var(--background-color);transform:translateY(-2px)}
+    .btn-action.primary{background:var(--accent-gradient);color:#fff;border-color:transparent}
+    .btn-action.primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(139,92,246,0.3)}
+    .status-badge{position:absolute;top:20px;right:20px;padding:6px 14px;border-radius:16px;font-size:12px;font-weight:700;text-transform:uppercase}
+    .status-badge.new{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af}
+    @media (max-width: 768px) {
+      .application-card{flex-direction:column}
+      .filters-bar{flex-direction:column;align-items:stretch}
+    }
+  </style>
+</head>
+<body>
+  <header class="nav-employer">
+    <a href="/frontend/pages/employer/dashboard.html" class="nav-brand" title="Go to Dashboard">
+      <img src="/frontend/public/assets/images/hirebridge-logo-full.svg" alt="HireBridge Logo">
+      <span class="nav-brand-text">HireBridge • Employer</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="/frontend/pages/employer/post-job.html">Post Job</a>
+      <a href="/frontend/pages/employer/manage-jobs.html">Manage Jobs</a>
+      <a href="/frontend/pages/employer/applications.html" style="background:var(--background-color)">Applications</a>
+      <a href="/frontend/pages/employer/candidates.html">Candidates</a>
+      <a href="/frontend/pages/employer/company-profile.html">Company</a>
+      <a href="/frontend/pages/employer/analytics.html">Analytics</a>
+      <a href="/frontend/pages/employer/settings.html">Settings</a>
+      <button class="btn-messages" onclick="window.location.href='/frontend/pages/employer/messages.html'" title="Messages" aria-label="Messages">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z"/>
+          <path d="M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0015.75 7.5z"/>
+        </svg>
+        <span>Messages</span>
+        <span class="message-badge" id="messageBadge" style="display: none;">0</span>
+      </button>
+      <button class="btn notification-bell" onclick="HB.showNotifications()" title="Notifications">
+        <span>🔔</span>
+        <span class="notification-badge">5</span>
+      </button>
+      <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="btn-logout" onclick="HB.logout()" title="Logout" aria-label="Logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <div class="page-header">
+      <h1>Applications 📨</h1>
+      <p class="subtitle">Review and manage candidate applications</p>
+    </div>
+
+    <div class="filters-bar">
+      <select class="filter-select" id="statusFilter" onchange="filterApplications()">
+        <option value="">All Applications</option>
+        <option value="pending">New</option>
+        <option value="reviewed">Reviewed</option>
+        <option value="shortlisted">Shortlisted</option>
+        <option value="rejected">Rejected</option>
+      </select>
+      <select class="filter-select" id="jobFilter" onchange="filterApplications()">
+        <option value="">All Jobs</option>
+      </select>
+    </div>
+
+    <div class="applications-grid" id="applicationsGrid">
+      <div style="text-align:center;padding:40px;color:var(--text-secondary)">
+        <p>Loading applications...</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script src="/frontend/public/js/common/chatbot.js"></script>
+  <script>
+    const API_BASE = window.HB?.api?.base || '/api';
+    let allApplications = [];
+    let jobsCache = {};
+    let applicantsCache = {};
+
+    function getAuthToken() {
+      if (window.HB?.auth?.getToken) {
+        const token = window.HB.auth.getToken();
+        if (token) return token;
+      }
+      return localStorage.getItem('hb_token') || localStorage.getItem('token');
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await loadApplications();
+    });
+
+    async function loadApplications() {
+      const token = getAuthToken();
+      if (!token) {
+        window.location.href = '/frontend/public/login.html';
+        return;
+      }
+
+      try {
+        console.log('📥 Loading employer applications...');
+        
+        // Fetch ALL applications for this employer
+        const response = await fetch(`${API_BASE}/applications/employer/all`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || `HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        allApplications = data.applications || [];
+
+        console.log(`✅ Loaded ${allApplications.length} applications`);
+
+        if (allApplications.length === 0) {
+          displayApplications([]);
+          return;
+        }
+
+        // Get unique job IDs and applicant IDs
+        const jobIds = [...new Set(allApplications.map(app => app.jobId))];
+        const applicantIds = [...new Set(allApplications.map(app => app.applicantId))];
+
+        // Fetch job details
+        await Promise.all(jobIds.map(async (jobId) => {
+          try {
+            const jobResponse = await fetch(`${API_BASE}/jobs/${jobId}`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (jobResponse.ok) {
+              const jobData = await jobResponse.json();
+              jobsCache[jobId] = jobData.job || jobData;
+            }
+          } catch (error) {
+            console.error(`Error fetching job ${jobId}:`, error);
+          }
+        }));
+
+        // Fetch applicant details
+        await Promise.all(applicantIds.map(async (applicantId) => {
+          try {
+            const userResponse = await fetch(`${API_BASE}/users/profile/${applicantId}`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (userResponse.ok) {
+              const userData = await userResponse.json();
+              applicantsCache[applicantId] = userData.user || userData;
+            }
+          } catch (error) {
+            console.error(`Error fetching user ${applicantId}:`, error);
+          }
+        }));
+
+        // Populate job filter dropdown
+        const jobFilter = document.getElementById('jobFilter');
+        const uniqueJobs = Object.values(jobsCache);
+        jobFilter.innerHTML = '<option value="">All Jobs</option>' +
+          uniqueJobs.map(job => `<option value="${job._id}">${job.title}</option>`).join('');
+
+        displayApplications(allApplications);
+      } catch (error) {
+        console.error('❌ Error loading applications:', error);
+        document.getElementById('applicationsGrid').innerHTML = `
+          <div style="text-align:center;padding:40px;color:var(--text-secondary)">
+            <p>❌ Error loading applications: ${error.message}</p>
+            <button class="btn-action primary" onclick="loadApplications()" style="margin-top:20px">Retry</button>
+          </div>
+        `;
+      }
+    }
+
+    function filterApplications() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      const jobFilter = document.getElementById('jobFilter').value;
+
+      let filtered = allApplications;
+
+      if (statusFilter) {
+        filtered = filtered.filter(app => app.status === statusFilter);
+      }
+
+      if (jobFilter) {
+        filtered = filtered.filter(app => app.jobId === jobFilter);
+      }
+
+      displayApplications(filtered);
+    }
+
+    function displayApplications(applications) {
+      const container = document.getElementById('applicationsGrid');
+      
+      if (!applications || applications.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:60px 20px;color:var(--text-secondary)">
+            <div style="font-size:64px;margin-bottom:20px">📨</div>
+            <h2 style="font-size:24px;margin:0 0 12px;color:var(--text-color)">No Applications Yet</h2>
+            <p style="margin:0 0 24px">When candidates apply to your jobs, they'll appear here</p>
+            <a href="/frontend/pages/employer/manage-jobs.html" class="btn-action primary">View Jobs</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = applications.map(app => {
+        const job = jobsCache[app.jobId] || {};
+        const applicant = applicantsCache[app.applicantId] || {};
+        
+        const name = applicant.name || 'Anonymous Applicant';
+        const initials = getInitials(name);
+        const statusClass = getStatusClass(app.status);
+        const statusLabel = getStatusLabel(app.status);
+        const appliedDate = new Date(app.createdAt);
+        const daysAgo = Math.floor((Date.now() - appliedDate) / (1000 * 60 * 60 * 24));
+        const timeText = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : `${daysAgo} days ago`;
+        
+        const email = applicant.email || '';
+        const phone = applicant.profile?.phone || '';
+        const location = applicant.profile?.location || '';
+        const skills = applicant.profile?.skills || [];
+
+        return `
+          <div class="application-card" style="position:relative">
+            <span class="status-badge ${statusClass}">${statusLabel}</span>
+            <div class="applicant-avatar">${initials}</div>
+            <div class="applicant-info">
+              <h3 class="applicant-name">${name}</h3>
+              <p class="applicant-role">Applied for: ${job.title || 'Position'}</p>
+              <div class="applicant-meta">
+                ${email ? `<span class="meta-badge">✉️ ${email}</span>` : ''}
+                ${phone ? `<span class="meta-badge">📱 ${phone}</span>` : ''}
+                ${location ? `<span class="meta-badge">📍 ${location}</span>` : ''}
+                ${skills.length > 0 ? `<span class="meta-badge">🎯 ${skills.slice(0, 3).join(', ')}</span>` : ''}
+                <span class="meta-badge">📅 ${timeText}</span>
+              </div>
+              ${app.coverLetter ? `
+                <div style="margin-top:12px;padding:12px;background:var(--background-color);border-radius:8px;font-size:14px;color:var(--text-color)">
+                  <strong>Cover Letter:</strong><br>${app.coverLetter}
+                </div>
+              ` : ''}
+              <div class="application-actions">
+                <button class="btn-action primary" onclick="viewProfile('${app.applicantId}')">👤 View Profile</button>
+                <button class="btn-action" onclick="updateStatus('${app._id}', 'review')" ${app.status !== 'submitted' ? 'disabled' : ''}>👁️ Review</button>
+                <button class="btn-action" onclick="updateStatus('${app._id}', 'shortlisted')" ${app.status === 'shortlisted' || app.status === 'interview' || app.status === 'hired' ? 'disabled' : ''}>⭐ Shortlist</button>
+                <button class="btn-action" onclick="updateStatus('${app._id}', 'interview')" ${app.status === 'interview' || app.status === 'hired' ? 'disabled' : ''}>📅 Interview</button>
+                <button class="btn-action" onclick="updateStatus('${app._id}', 'hired')" ${app.status === 'hired' ? 'disabled' : ''}>✅ Hire</button>
+                <button class="btn-action" onclick="updateStatus('${app._id}', 'rejected')" ${app.status === 'rejected' ? 'disabled' : ''}>❌ Reject</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      const parts = name.trim().split(' ');
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      }
+      return name.substring(0, 2).toUpperCase();
+    }
+
+    function getStatusClass(status) {
+      switch(status) {
+        case 'submitted': return 'new';
+        case 'review': return 'reviewed';
+        case 'shortlisted': return 'shortlisted';
+        case 'interview': return 'interview';
+        case 'hired': return 'hired';
+        case 'rejected': return 'rejected';
+        default: return 'new';
+      }
+    }
+
+    function getStatusLabel(status) {
+      switch(status) {
+        case 'submitted': return 'New';
+        case 'review': return 'Reviewing';
+        case 'shortlisted': return 'Shortlisted';
+        case 'interview': return 'Interview';
+        case 'hired': return 'Hired';
+        case 'rejected': return 'Rejected';
+        default: return 'New';
+      }
+    }
+
+    function viewProfile(applicantId) {
+      window.location.href = `/frontend/pages/employer/candidates.html?id=${applicantId}`;
+    }
+
+    async function updateStatus(applicationId, newStatus) {
+      const token = getAuthToken();
+      
+      try {
+        console.log(`📝 Updating application ${applicationId} to ${newStatus}`);
+        
+        const response = await fetch(`${API_BASE}/applications/${applicationId}/status`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({ status: newStatus })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to update status');
+        }
+
+        console.log('✅ Status updated successfully');
+        alert(`Application status updated to ${newStatus}`);
+        await loadApplications();
+      } catch (error) {
+        console.error('❌ Error updating status:', error);
+        alert('Failed to update application status: ' + error.message);
+      }
+    }
+  </script>
+</body>
+</html>

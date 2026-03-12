@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Candidates • Employer</title>
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/employer.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/notifications.css">
+  <style>
+    .page-container{max-width:1400px;margin:0 auto;padding:32px 24px}
+    .page-header{margin-bottom:32px}
+    .page-header h1{font-size:32px;font-weight:800;margin:0 0 8px 0;background:var(--accent-gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .page-header .subtitle{color:var(--text-secondary);font-size:15px}
+    .search-bar{background:var(--surface-color);border-radius:16px;padding:20px;border:1px solid var(--border-color);margin-bottom:24px}
+    .search-input{width:100%;padding:14px 20px;border-radius:12px;border:2px solid var(--border-color);background:var(--background-color);color:var(--text-color);font-size:15px}
+    .search-input:focus{outline:none;border-color:var(--primary-color)}
+    .candidates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+    .candidate-card{background:var(--surface-color);border-radius:16px;padding:24px;border:1px solid var(--border-color);box-shadow:var(--card-shadow);transition:all 0.3s ease;text-align:center}
+    .candidate-card:hover{box-shadow:var(--card-shadow-hover);transform:translateY(-4px)}
+    .candidate-avatar{width:80px;height:80px;margin:0 auto 16px;border-radius:50%;background:var(--accent-gradient);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff}
+    .candidate-name{font-size:20px;font-weight:700;margin:0 0 8px 0;color:var(--text-color)}
+    .candidate-role{color:var(--text-secondary);font-size:14px;margin:0 0 16px 0}
+    .skills-container{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px;min-height:40px}
+    .skill-tag{padding:6px 12px;background:var(--background-color);border:1px solid var(--border-color);border-radius:16px;font-size:12px;font-weight:600;color:var(--text-color)}
+    .candidate-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 0;border-top:1px solid var(--border-color);border-bottom:1px solid var(--border-color);margin-bottom:16px}
+    .stat-item{text-align:center}
+    .stat-value{font-size:18px;font-weight:700;color:var(--text-color)}
+    .stat-label{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px}
+    .candidate-actions{display:flex;gap:8px}
+    .btn-action{flex:1;padding:10px 16px;border-radius:10px;border:2px solid var(--border-color);background:var(--surface-color);color:var(--text-color);font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s ease}
+    .btn-action:hover{border-color:var(--primary-color);transform:translateY(-2px)}
+    .btn-action.primary{background:var(--accent-gradient);color:#fff;border-color:transparent}
+    .btn-action.primary:hover{box-shadow:0 4px 12px rgba(139,92,246,0.3)}
+    @media (max-width: 768px) {
+      .candidates-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <header class="nav-employer">
+    <a href="/frontend/pages/employer/dashboard.html" class="nav-brand" title="Go to Dashboard">
+      <img src="/frontend/public/assets/images/hirebridge-logo-full.svg" alt="HireBridge Logo">
+      <span class="nav-brand-text">HireBridge • Employer</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="/frontend/pages/employer/post-job.html">Post Job</a>
+      <a href="/frontend/pages/employer/manage-jobs.html">Manage Jobs</a>
+      <a href="/frontend/pages/employer/applications.html">Applications</a>
+      <a href="/frontend/pages/employer/candidates.html" style="background:var(--background-color)">Candidates</a>
+      <a href="/frontend/pages/employer/company-profile.html">Company</a>
+      <a href="/frontend/pages/employer/analytics.html">Analytics</a>
+      <a href="/frontend/pages/employer/settings.html">Settings</a>
+      <button class="btn notification-bell" onclick="HB.showNotifications()" title="Notifications">
+        <span>🔔</span>
+        <span class="notification-badge">5</span>
+      </button>
+      <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="btn-logout" onclick="HB.logout()" title="Logout" aria-label="Logout">Logout</button>
+    </nav>
+  </header>
+
+  <main class="page-container">
+    <div class="page-header">
+      <h1>Find Candidates 🔍</h1>
+      <p class="subtitle">Discover talented professionals for your team</p>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" class="search-input" placeholder="🔍 Search candidates by skills, role, or location...">
+    </div>
+
+    <div class="candidates-grid" id="candidatesGrid">
+      <div style="text-align:center;padding:40px;color:var(--text-secondary)">
+        <p>Loading candidates...</p>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script src="/frontend/public/js/common/chatbot.js"></script>
+  <script>
+    // Load candidates from applications
+    window.addEventListener('DOMContentLoaded', loadCandidates);
+
+    async function loadCandidates() {
+      const token = HB?.auth?.getToken?.();
+      if (!token) {
+        window.location.href = '/frontend/public/login.html';
+        return;
+      }
+
+      try {
+        // Get applications for this employer's jobs
+        const response = await fetch('http://localhost:3000/api/applications', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to load applications');
+        
+        const data = await response.json();
+        const applications = data.applications || data || [];
+        
+        // Get unique candidates from applications
+        const candidatesMap = new Map();
+        
+        for (const app of applications) {
+          const candidateId = app.userId || app.applicantId;
+          if (candidateId && !candidatesMap.has(candidateId)) {
+            candidatesMap.set(candidateId, {
+              id: candidateId,
+              name: app.userName || app.applicantName || 'Anonymous',
+              email: app.userEmail || app.applicantEmail || '',
+              jobTitle: app.jobTitle || 'Position',
+              appliedFor: app.jobTitle || 'Position',
+              skills: app.skills || [],
+              experience: app.experience || '',
+              location: app.location || '',
+              status: app.status,
+              matchScore: app.matchScore || 0,
+              appliedAt: app.createdAt || app.appliedAt
+            });
+          }
+        }
+
+        const candidates = Array.from(candidatesMap.values());
+        displayCandidates(candidates);
+      } catch (error) {
+        console.error('Error loading candidates:', error);
+        document.getElementById('candidatesGrid').innerHTML = `
+          <div style="text-align:center;padding:40px;color:var(--text-secondary)">
+            <p>❌ Error loading candidates: ${error.message}</p>
+          </div>
+        `;
+      }
+    }
+
+    function displayCandidates(candidates) {
+      const container = document.getElementById('candidatesGrid');
+      
+      if (!candidates || candidates.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center;padding:60px 20px;color:var(--text-secondary);grid-column:1/-1">
+            <div style="font-size:64px;margin-bottom:20px">👥</div>
+            <h2 style="font-size:24px;margin:0 0 12px;color:var(--text-color)">No Candidates Yet</h2>
+            <p style="margin:0 0 24px">When candidates apply to your jobs, they'll appear here</p>
+            <a href="/frontend/pages/employer/manage-jobs.html" class="btn-action primary">View Jobs</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = candidates.map(candidate => {
+        const initials = getInitials(candidate.name);
+        const skills = candidate.skills && candidate.skills.length > 0 
+          ? candidate.skills.slice(0, 4) 
+          : ['No skills listed'];
+        
+        const matchBadge = candidate.matchScore > 0 
+          ? `<span class="match-badge" style="position:absolute;top:16px;right:16px;background:rgba(16,185,129,0.15);color:#10b981;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700">⭐ ${candidate.matchScore}% Match</span>`
+          : '';
+
+        const statusBadge = candidate.status === 'accepted' ? 'NEW' : '';
+        
+        return `
+          <div class="candidate-card" style="position:relative">
+            ${statusBadge ? `<span style="position:absolute;top:16px;left:16px;background:#8b5cf6;color:#fff;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700">${statusBadge}</span>` : ''}
+            ${matchBadge}
+            <div class="candidate-avatar">${initials}</div>
+            <h3 class="candidate-name">${candidate.name}</h3>
+            <p class="candidate-role">Applied for: ${candidate.appliedFor}</p>
+            <div class="skills-container">
+              ${skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+            </div>
+            <div class="candidate-stats">
+              ${candidate.experience ? `
+                <div class="stat-item">
+                  <div class="stat-value">${candidate.experience}</div>
+                  <div class="stat-label">Experience</div>
+                </div>
+              ` : ''}
+              ${candidate.location ? `
+                <div class="stat-item">
+                  <div class="stat-value">${candidate.location}</div>
+                  <div class="stat-label">Location</div>
+                </div>
+              ` : ''}
+            </div>
+            <div class="candidate-actions">
+              <button class="btn-action primary" onclick="viewProfile('${candidate.id}')">👁️ View Profile</button>
+              <button class="btn-action" onclick="contactCandidate('${candidate.email}', '${candidate.name}')">📧 Contact</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getInitials(name) {
+      if (!name) return '?';
+      const parts = name.trim().split(' ');
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      }
+      return name.substring(0, 2).toUpperCase();
+    }
+
+    function viewProfile(candidateId) {
+      // Redirect to profile view or open modal
+      window.location.href = `/frontend/pages/employer/applications.html?candidateId=${candidateId}`;
+    }
+
+    function contactCandidate(email, name) {
+      if (!email) {
+        alert('No email available for this candidate');
+        return;
+      }
+      window.location.href = `mailto:${email}?subject=Regarding your application at HireBridge`;
+    }
+  </script>
+</body>
+</html>

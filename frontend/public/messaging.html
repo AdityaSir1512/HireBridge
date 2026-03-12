@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Direct Messaging • HireBridge</title>
+  <link rel="icon" type="image/svg+xml" href="/frontend/public/assets/images/hirebridge-logo-full.svg">
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <style>
+    .msg-hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      margin: -16px -16px 40px;
+      border-radius: 0 0 24px 24px;
+    }
+    .msg-hero h1 { font-size: 48px; margin: 0 0 16px; font-weight: 800; }
+    .msg-hero p { font-size: 20px; margin: 0; opacity: 0.95; }
+    
+    .features-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin: 40px 0;
+    }
+    .feature-box {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .feature-box h3 { font-size: 22px; margin: 0 0 12px; color: var(--text-color); }
+    .feature-box p { font-size: 15px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+    .icon-large { font-size: 56px; margin-bottom: 16px; display: block; }
+    
+    .demo-section {
+      max-width: 900px;
+      margin: 40px auto;
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .chat-header {
+      padding: 16px 24px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .chat-header img { width: 40px; height: 40px; border-radius: 50%; background: white; }
+    .chat-messages {
+      padding: 24px;
+      min-height: 400px;
+      background: var(--background-color);
+    }
+    .message {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 12px;
+    }
+    .message.sent { flex-direction: row-reverse; }
+    .message-bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .message.received .message-bubble {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+    }
+    .message.sent .message-bubble {
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+    }
+    .message-time {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+    
+    .cta-box {
+      text-align: center;
+      padding: 48px 24px;
+      background: var(--surface-color);
+      border-radius: 20px;
+      margin: 40px 0;
+    }
+    .cta-box h2 { font-size: 32px; margin: 0 0 16px; color: var(--text-color); }
+    .cta-box p { font-size: 18px; margin: 0 0 24px; color: var(--text-secondary); }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="/frontend/public/index.html" class="brand" style="text-decoration: none; cursor: pointer;">
+        <span class="logo"></span>
+        <span>HireBridge</span>
+      </a>
+      <nav class="primary-nav">
+        <a href="/frontend/public/login.html">Login</a>
+        <a href="/frontend/public/register.html" class="btn">Sign up</a>
+        <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 1100px;">
+    <div class="msg-hero">
+      <h1>💬 Direct Messaging</h1>
+      <p>Connect with recruiters and hiring managers in real-time</p>
+    </div>
+
+    <div class="features-section">
+      <div class="feature-box">
+        <span class="icon-large">⚡</span>
+        <h3>Real-time Chat</h3>
+        <p>Instant messaging with employers and recruiters. No delays, no waiting.</p>
+      </div>
+      <div class="feature-box">
+        <span class="icon-large">📎</span>
+        <h3>Share Files</h3>
+        <p>Send your resume, portfolio, or any documents directly in the chat.</p>
+      </div>
+      <div class="feature-box">
+        <span class="icon-large">🔔</span>
+        <h3>Instant Notifications</h3>
+        <p>Get notified immediately when you receive a new message.</p>
+      </div>
+    </div>
+
+    <h2 style="text-align: center; font-size: 32px; margin: 60px 0 32px; color: var(--text-color);">See It In Action</h2>
+
+    <div class="demo-section">
+      <div class="chat-header">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 20px;">👔</div>
+        <div>
+          <div style="font-weight: 600; font-size: 16px;">Sarah Johnson</div>
+          <div style="font-size: 13px; opacity: 0.9;">HR Manager at Tech Corp</div>
+        </div>
+      </div>
+      <div class="chat-messages">
+        <div class="message received">
+          <div>
+            <div class="message-bubble">
+              Hi! I came across your profile and I'm impressed with your skills in React and Node.js. We have an opening for a Full Stack Developer position.
+            </div>
+            <div class="message-time">10:30 AM</div>
+          </div>
+        </div>
+        <div class="message sent">
+          <div>
+            <div class="message-bubble">
+              Thank you for reaching out! I'm definitely interested. Could you tell me more about the role and the team?
+            </div>
+            <div class="message-time" style="text-align: right;">10:32 AM</div>
+          </div>
+        </div>
+        <div class="message received">
+          <div>
+            <div class="message-bubble">
+              Of course! It's a remote position working with our product team. You'll be building new features for our SaaS platform. Would you be available for a quick call tomorrow at 2 PM?
+            </div>
+            <div class="message-time">10:35 AM</div>
+          </div>
+        </div>
+        <div class="message sent">
+          <div>
+            <div class="message-bubble">
+              That sounds great! Yes, I'm available tomorrow at 2 PM. Looking forward to it! 😊
+            </div>
+            <div class="message-time" style="text-align: right;">10:36 AM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <h2>🚀 Ready to Connect with Top Employers?</h2>
+      <p>Create your account and start messaging with recruiters today</p>
+      <a href="/frontend/public/register.html?type=seeker" class="btn primary" style="padding: 14px 32px; font-size: 16px;">Get Started Free</a>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/router.js"></script>
+</body>
+</html>

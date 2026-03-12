@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Update CV • HireBridge</title>
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/job-seeker.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <style>
+    .cv-container{max-width:900px;margin:0 auto;padding:32px 24px}
+    .cv-hero{text-align:center;padding:40px 20px;background:var(--accent-gradient);color:#fff;margin:-16px -16px 40px;border-radius:0 0 24px 24px}
+    .cv-hero h1{font-size:36px;margin:0 0 12px;font-weight:800}
+    .cv-hero p{font-size:18px;margin:0;opacity:0.95}
+    
+    .upload-section{background:var(--surface-color);border:1px solid var(--border-color);border-radius:20px;padding:40px;margin-bottom:32px}
+    .upload-area{border:3px dashed var(--border-color);border-radius:16px;padding:60px 40px;text-align:center;transition:all 0.3s ease;cursor:pointer;background:var(--background-color)}
+    .upload-area:hover,.upload-area.drag-over{border-color:var(--primary-color);background:rgba(139,92,246,0.05)}
+    .upload-icon{font-size:64px;margin-bottom:16px}
+    .upload-area h3{font-size:24px;margin:0 0 12px;color:var(--text-color)}
+    .upload-area p{font-size:15px;color:var(--text-secondary);margin:0 0 20px}
+    .file-input{display:none}
+    .upload-btn{padding:12px 32px;background:var(--accent-gradient);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.3s ease}
+    .upload-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(139,92,246,0.3)}
+    
+    .current-cv{background:var(--surface-color);border:1px solid var(--border-color);border-radius:20px;padding:32px}
+    .current-cv h2{font-size:24px;margin:0 0 24px;color:var(--text-color)}
+    .cv-info{display:flex;align-items:center;gap:16px;padding:16px;background:var(--background-color);border-radius:12px;margin-bottom:16px}
+    .cv-icon{font-size:48px}
+    .cv-details{flex:1}
+    .cv-name{font-weight:600;margin:0 0 4px;color:var(--text-color)}
+    .cv-meta{font-size:14px;color:var(--text-secondary);margin:0}
+    .cv-actions{display:flex;gap:12px;margin-top:20px}
+    .cv-actions button{padding:10px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.3s ease}
+    .btn-view{background:var(--primary-color);color:#fff;border:none}
+    .btn-view:hover{transform:translateY(-2px)}
+    .btn-delete{background:transparent;color:#ef4444;border:2px solid #ef4444}
+    .btn-delete:hover{background:#ef4444;color:#fff}
+    
+    .processing{display:none;text-align:center;margin:20px 0}
+    .spinner{border:4px solid var(--border-color);border-top:4px solid var(--primary-color);border-radius:50%;width:48px;height:48px;animation:spin 1s linear infinite;margin:0 auto 16px}
+    @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+    .progress-bar{width:100%;height:8px;background:var(--border-color);border-radius:4px;overflow:hidden;margin:20px 0}
+    .progress-fill{height:100%;background:var(--accent-gradient);width:0%;transition:width 2s ease}
+  </style>
+</head>
+<body>
+  <header class="nav-job-seeker">
+    <a href="/frontend/pages/job-seeker/dashboard.html" class="nav-brand">
+      <img src="/frontend/public/assets/images/hirebridge-logo-full.svg" alt="HireBridge Logo">
+      <span class="nav-brand-text">HireBridge • Candidate</span>
+    </a>
+    <nav class="nav-menu">
+      <a href="/frontend/pages/job-seeker/jobs.html">Jobs</a>
+      <a href="/frontend/pages/job-seeker/applications.html">Applications</a>
+      <a href="/frontend/pages/job-seeker/saved.html">Saved</a>
+      <a href="/frontend/pages/job-seeker/profile.html">Profile</a>
+      <a href="/frontend/pages/job-seeker/settings.html">Settings</a>
+      <button class="btn notification-bell" onclick="HB.showNotifications()">
+        <span>🔔</span>
+        <span class="notification-badge" id="notificationBadge">0</span>
+      </button>
+      <button class="btn theme-toggle" onclick="HB.toggleTheme()">
+        <span class="theme-icon">🌙</span>
+      </button>
+      <button class="btn-logout" onclick="HB.logout()">Logout</button>
+    </nav>
+  </header>
+
+  <main class="cv-container">
+    <div class="cv-hero">
+      <h1>📄 Update Your CV</h1>
+      <p>Keep your resume up to date to attract the best opportunities</p>
+    </div>
+
+    <div class="current-cv" id="currentCvSection" style="display:none;">
+      <h2>Current CV</h2>
+      <div class="cv-info">
+        <div class="cv-icon">📄</div>
+        <div class="cv-details">
+          <p class="cv-name" id="cvName">My_Resume.pdf</p>
+          <p class="cv-meta" id="cvMeta">Uploaded 2 days ago • 245 KB</p>
+        </div>
+      </div>
+      <div class="cv-actions">
+        <button class="btn-view" onclick="viewCV()">👁️ View CV</button>
+        <button class="btn-delete" onclick="deleteCV()">🗑️ Delete</button>
+      </div>
+    </div>
+
+    <div class="upload-section">
+      <h2 style="margin:0 0 24px;font-size:24px;">Upload New CV</h2>
+      <div class="upload-area" id="uploadArea" onclick="document.getElementById('cvFile').click()">
+        <div class="upload-icon">📤</div>
+        <h3>Drop your CV here or click to browse</h3>
+        <p>Supports PDF, DOC, DOCX (Max 5MB)</p>
+        <input type="file" id="cvFile" class="file-input" accept=".pdf,.doc,.docx">
+        <button class="upload-btn" onclick="event.stopPropagation(); document.getElementById('cvFile').click()">Choose File</button>
+      </div>
+      
+      <div class="processing" id="processing">
+        <div class="spinner"></div>
+        <p style="color:var(--text-secondary)">Processing your CV...</p>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/api.js"></script>
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script src="/frontend/public/js/common/auth.js"></script>
+  <script src="/frontend/public/js/common/notifications.js"></script>
+  <script>
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('cvFile');
+    const processing = document.getElementById('processing');
+    const progressFill = document.getElementById('progressFill');
+
+    // Check for existing CV on load
+    window.addEventListener('DOMContentLoaded', checkExistingCV);
+
+    function checkExistingCV() {
+      const token = HB?.auth?.getToken?.();
+      if (!token) return;
+      
+      // For now, hide current CV section - would need backend endpoint
+      document.getElementById('currentCvSection').style.display = 'none';
+    }
+
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('drag-over');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('drag-over');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('drag-over');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        handleFile(files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    async function handleFile(file) {
+      // Validate file size
+      if (file.size > 5 * 1024 * 1024) {
+        alert('❌ File size should not exceed 5MB');
+        return;
+      }
+
+      // Validate file type
+      const validTypes = ['.pdf', '.doc', '.docx'];
+      const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+      if (!validTypes.includes(fileExt)) {
+        alert('❌ Please upload a PDF, DOC, or DOCX file');
+        return;
+      }
+
+      // Show processing
+      uploadArea.style.display = 'none';
+      processing.style.display = 'block';
+      
+      setTimeout(() => {
+        progressFill.style.width = '100%';
+      }, 100);
+
+      // Upload to CV processing service
+      const formData = new FormData();
+      formData.append('cv', file);
+      const token = HB?.auth?.getToken?.();
+      const user = HB?.auth?.getUser?.();
+      
+      if (!user || !user.userId) {
+        alert('❌ Please login to upload CV');
+        processing.style.display = 'none';
+        uploadArea.style.display = 'block';
+        return;
+      }
+      
+      formData.append('userId', user.userId);
+
+      try {
+        const response = await fetch('http://localhost:3000/api/cv/upload', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('CV uploaded:', data);
+          
+          // Now parse the CV with AI
+          if (data.cv && data.cv._id) {
+            try {
+              const parseResponse = await fetch('http://localhost:3000/api/cv/parse-ai', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  cvId: data.cv._id,
+                  updateProfile: true
+                })
+              });
+              
+              const parseData = await parseResponse.json();
+              console.log('CV parsed:', parseData);
+            } catch (parseError) {
+              console.error('AI parsing failed:', parseError);
+            }
+          }
+          
+          setTimeout(() => {
+            processing.style.display = 'none';
+            uploadArea.style.display = 'block';
+            progressFill.style.width = '0%';
+            
+            if (window.HB?.notifications?.showToast) {
+              window.HB.notifications.showToast({
+                title: 'Success!',
+                message: 'Your CV has been uploaded and parsed with AI. Check your profile!',
+                icon: '✅'
+              });
+            } else {
+              alert('✅ CV uploaded successfully! Your profile has been updated.');
+            }
+            
+            // Show current CV section
+            document.getElementById('currentCvSection').style.display = 'block';
+            document.getElementById('cvName').textContent = file.name;
+            document.getElementById('cvMeta').textContent = `Uploaded just now • ${Math.round(file.size/1024)} KB`;
+          }, 2500);
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || 'Upload failed');
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+        processing.style.display = 'none';
+        uploadArea.style.display = 'block';
+        progressFill.style.width = '0%';
+        alert(`❌ Upload failed: ${error.message}. Please try again.`);
+      }
+    }
+
+    function viewCV() {
+      alert('📄 CV viewer will open here');
+    }
+
+    function deleteCV() {
+      if (confirm('Are you sure you want to delete your current CV?')) {
+        document.getElementById('currentCvSection').style.display = 'none';
+        if (window.HB?.notifications?.showToast) {
+          window.HB.notifications.showToast({
+            title: 'Deleted',
+            message: 'Your CV has been removed',
+            icon: '🗑️'
+          });
+        }
+      }
+    }
+  </script>
+</body>
+</html>

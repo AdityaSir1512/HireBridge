@@ -1,0 +1,66 @@
+/* Theme Variables */
+:root {
+  /* Modern Purple/Teal Theme - Light Mode */
+  --primary-color: #8b5cf6; /* vibrant purple */
+  --primary-600: #7c3aed;
+  --primary-400: #a78bfa;
+  --secondary-color: #14b8a6; /* teal accent */
+
+  --background-color: #f8fafc; /* soft white with blue tint */
+  --surface-color: #ffffff;    /* pure white surface */
+  --surface-rgb: 255, 255, 255;
+  --text-color: #0f172a;       /* slate dark */
+  --text-secondary: #64748b;   /* slate gray */
+  --border-color: rgba(226, 232, 240, 0.8);
+
+  /* Modern gradient effects */
+  --bg-gradient: linear-gradient(135deg, #faf5ff 0%, #f0fdfa 50%, #fef3c7 100%);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(139, 92, 246, 0.15);
+  --glass-shadow: 0 8px 32px rgba(124, 58, 237, 0.1);
+  --glow: 0 0 0 3px rgba(139, 92, 246, 0.15), 0 4px 20px rgba(139, 92, 246, 0.25);
+  --accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #14b8a6 100%);
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 10px 40px rgba(139, 92, 246, 0.05);
+  --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.08), 0 20px 60px rgba(139, 92, 246, 0.12);
+}
+
+[data-theme="dark"] {
+  /* Modern Purple/Teal Theme - Dark Mode */
+  --primary-color: #a78bfa; /* lighter purple for dark */
+  --primary-600: #8b5cf6;
+  --primary-400: #c4b5fd;
+  --secondary-color: #2dd4bf; /* bright teal */
+
+  --background-color: #0f172a; /* slate 900 */
+  --surface-color: #1e293b;    /* slate 800 */
+  --surface-rgb: 30, 41, 59;
+  --text-color: #f1f5f9;       /* slate 100 */
+  --text-secondary: #94a3b8;   /* slate 400 */
+  --border-color: rgba(71, 85, 105, 0.5);
+
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #134e4a 100%);
+  --glass-bg: rgba(30, 41, 59, 0.85);
+  --glass-border: rgba(167, 139, 250, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --glow: 0 0 0 3px rgba(167, 139, 250, 0.2), 0 4px 24px rgba(167, 139, 250, 0.35);
+  --accent-gradient: linear-gradient(135deg, #a78bfa 0%, #2dd4bf 100%);
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 10px 40px rgba(0, 0, 0, 0.3);
+  --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4), 0 20px 60px rgba(167, 139, 250, 0.2);
+}
+
+/* Base canvas */
+html, body { background: var(--bg-gradient); color: var(--text-color); }
+
+/* Optional helpers other styles can opt into */
+.glass { background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: var(--glass-shadow); }
+.neon { box-shadow: var(--glow); }
+
+/* Theme utility classes (kept for compatibility) */
+.theme-light { background-color: var(--background-color); color: var(--text-color); }
+.theme-dark { background-color: var(--background-color); color: var(--text-color); }
+
+/* Common interactive elements */
+.btn { background: var(--surface-color); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 10px; transition: all 220ms ease; }
+.btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(2, 6, 23, 0.08); }
+.btn.primary { background: linear-gradient(180deg, var(--primary-400), var(--primary-600)); color: #ffffff; border-color: transparent; box-shadow: var(--glow); }
+.btn.primary:hover { filter: brightness(1.05); transform: translateY(-2px); }

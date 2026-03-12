@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Company Reviews • HireBridge</title>
+  <link rel="icon" type="image/svg+xml" href="/frontend/public/assets/images/hirebridge-logo-full.svg">
+  <link rel="stylesheet" href="/frontend/public/css/themes.css">
+  <link rel="stylesheet" href="/frontend/public/css/design-system.css">
+  <link rel="stylesheet" href="/frontend/public/css/responsive.css">
+  <style>
+    .reviews-hero {
+      text-align: center;
+      padding: 60px 20px 40px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      color: white;
+      margin: -16px -16px 40px;
+      border-radius: 0 0 24px 24px;
+    }
+    .reviews-hero h1 { font-size: 48px; margin: 0 0 16px; font-weight: 800; }
+    .reviews-hero p { font-size: 20px; margin: 0; opacity: 0.95; }
+    
+    .search-box {
+      max-width: 600px;
+      margin: 40px auto;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 16px 20px 16px 50px;
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      font-size: 16px;
+      background: var(--surface-color);
+      color: var(--text-color);
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 20px;
+    }
+    
+    .companies-grid {
+      display: grid;
+      gap: 24px;
+      margin: 40px 0;
+    }
+    .company-card {
+      background: var(--surface-color);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .company-card:hover {
+      box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15);
+      border-color: var(--primary-color);
+    }
+    .company-header {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .company-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #8b5cf6, #14b8a6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    .company-info h3 { margin: 0 0 4px; font-size: 22px; color: var(--text-color); }
+    .company-info p { margin: 0; font-size: 14px; color: var(--text-secondary); }
+    .rating-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .stars { color: #fbbf24; font-size: 20px; letter-spacing: 2px; }
+    .rating-number { font-size: 18px; font-weight: 700; color: var(--text-color); }
+    .rating-count { font-size: 14px; color: var(--text-secondary); }
+    
+    .review-preview {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+    .review-text {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      margin: 0 0 12px;
+      font-style: italic;
+    }
+    .review-author {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .review-author strong { color: var(--text-color); }
+    
+    .categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .category-tag {
+      padding: 6px 12px;
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--primary-color);
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+      <a href="/frontend/public/index.html" class="brand" style="text-decoration: none; cursor: pointer;">
+        <span class="logo"></span>
+        <span>HireBridge</span>
+      </a>
+      <nav class="primary-nav">
+        <a href="/frontend/public/login.html">Login</a>
+        <a href="/frontend/public/register.html" class="btn">Sign up</a>
+        <button class="btn theme-toggle" onclick="HB.toggleTheme()" title="Toggle theme">
+          <span class="theme-icon">🌙</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 1100px;">
+    <div class="reviews-hero">
+      <h1>⭐ Company Reviews & Ratings</h1>
+      <p>Real reviews from students who worked there</p>
+    </div>
+
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="Search for companies..." id="companySearch">
+    </div>
+
+    <h2 style="text-align: center; font-size: 32px; margin: 60px 0 32px; color: var(--text-color);">Top Rated Companies</h2>
+
+    <div class="companies-grid">
+      <div class="company-card" onclick="viewCompany('tech-corp')">
+        <div class="company-header">
+          <div class="company-logo">🚀</div>
+          <div class="company-info">
+            <h3>Tech Corp</h3>
+            <p>Software Development • Bangalore, India</p>
+            <div class="rating-section">
+              <span class="stars">★★★★★</span>
+              <span class="rating-number">4.8</span>
+              <span class="rating-count">(245 reviews)</span>
+            </div>
+          </div>
+        </div>
+        <div class="categories">
+          <span class="category-tag">Great Work Culture</span>
+          <span class="category-tag">Good Salary</span>
+          <span class="category-tag">Learning Opportunities</span>
+        </div>
+        <div class="review-preview">
+          <p class="review-text">"Amazing place for freshers! The mentorship program helped me grow exponentially. Great work-life balance and supportive team."</p>
+          <p class="review-author"><strong>Rahul M.</strong> • Full Stack Intern • Worked 6 months</p>
+        </div>
+      </div>
+
+      <div class="company-card" onclick="viewCompany('innovation-labs')">
+        <div class="company-header">
+          <div class="company-logo">💡</div>
+          <div class="company-info">
+            <h3>Innovation Labs</h3>
+            <p>AI/ML Research • Hyderabad, India</p>
+            <div class="rating-section">
+              <span class="stars">★★★★★</span>
+              <span class="rating-number">4.7</span>
+              <span class="rating-count">(189 reviews)</span>
+            </div>
+          </div>
+        </div>
+        <div class="categories">
+          <span class="category-tag">Cutting Edge Tech</span>
+          <span class="category-tag">Remote Friendly</span>
+          <span class="category-tag">Good Perks</span>
+        </div>
+        <div class="review-preview">
+          <p class="review-text">"Working on actual AI projects from day one! The team is brilliant and always ready to help. Learned more here in 3 months than a year of college."</p>
+          <p class="review-author"><strong>Priya S.</strong> • ML Intern • Worked 3 months</p>
+        </div>
+      </div>
+
+      <div class="company-card" onclick="viewCompany('startup-xyz')">
+        <div class="company-header">
+          <div class="company-logo">⚡</div>
+          <div class="company-info">
+            <h3>Startup XYZ</h3>
+            <p>Product Development • Remote</p>
+            <div class="rating-section">
+              <span class="stars">★★★★☆</span>
+              <span class="rating-number">4.5</span>
+              <span class="rating-count">(156 reviews)</span>
+            </div>
+          </div>
+        </div>
+        <div class="categories">
+          <span class="category-tag">Fast Paced</span>
+          <span class="category-tag">Ownership</span>
+          <span class="category-tag">Startup Culture</span>
+        </div>
+        <div class="review-preview">
+          <p class="review-text">"If you want to learn fast and take ownership, this is the place. You'll wear multiple hats but grow tremendously. Great for self-starters!"</p>
+          <p class="review-author"><strong>Amit K.</strong> • Product Intern • Worked 4 months</p>
+        </div>
+      </div>
+
+      <div class="company-card" onclick="viewCompany('design-studio')">
+        <div class="company-header">
+          <div class="company-logo">🎨</div>
+          <div class="company-info">
+            <h3>Design Studio Pro</h3>
+            <p>UI/UX Design • Mumbai, India</p>
+            <div class="rating-section">
+              <span class="stars">★★★★★</span>
+              <span class="rating-number">4.9</span>
+              <span class="rating-count">(98 reviews)</span>
+            </div>
+          </div>
+        </div>
+        <div class="categories">
+          <span class="category-tag">Creative Freedom</span>
+          <span class="category-tag">Portfolio Building</span>
+          <span class="category-tag">Flexible Hours</span>
+        </div>
+        <div class="review-preview">
+          <p class="review-text">"Best place for design interns! Worked on real client projects and built an amazing portfolio. The senior designers are super helpful and encouraging."</p>
+          <p class="review-author"><strong>Neha P.</strong> • UI/UX Intern • Worked 5 months</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin: 60px 0 40px; padding: 48px 24px; background: var(--surface-color); border-radius: 20px;">
+      <h2 style="font-size: 32px; margin: 0 0 16px; color: var(--text-color);">📝 Share Your Experience</h2>
+      <p style="font-size: 18px; margin: 0 0 24px; color: var(--text-secondary);">Help other students make informed decisions</p>
+      <a href="/frontend/public/login.html" class="btn primary" style="padding: 14px 32px; font-size: 16px;">Write a Review</a>
+    </div>
+  </main>
+
+  <script src="/frontend/public/js/common/router.js"></script>
+  <script>
+    function viewCompany(companyId) {
+      alert(`📊 Full company profile coming soon!\n\nYou'll be able to see:\n• Detailed reviews\n• Salary insights\n• Interview experiences\n• Work culture ratings\n\nSign up to access full reviews!`);
+      setTimeout(() => {
+        window.location.href = '/frontend/public/register.html?type=seeker';
+      }, 2000);
+    }
+
+    document.getElementById('companySearch').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const cards = document.querySelectorAll('.company-card');
+      
+      cards.forEach(card => {
+        const companyName = card.querySelector('h3').textContent.toLowerCase();
+        if (companyName.includes(searchTerm)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
